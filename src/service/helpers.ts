@@ -1,22 +1,41 @@
-import { types } from "@cosmwasm/sdk";
-import { Decimal } from "@iov/encoding";
+import { Coin, coin } from "@cosmjs/sdk38";
+import { Decimal } from "@cosmjs/math";
+import { logs } from "@cosmjs/cosmwasm";
 
 // NARROW NO-BREAK SPACE (U+202F)
 const thinSpace = "\u202F";
 
-export function printableBalance(balance?: readonly types.Coin[]): string {
+export function printableBalanceOf(denom: string, balance?: readonly Coin[]): string {
+  if (!balance || balance.length === 0) return "–";
+  const coin = balance.filter(coin => coin.denom === denom).map(printableCoin);
+  return coin.length > 0 ? coin[0] : "";
+}
+
+export function printableBalance(balance?: readonly Coin[]): string {
   if (!balance || balance.length === 0) return "–";
   return balance.map(printableCoin).join(", ");
 }
 
-export function printableCoin(coin?: types.Coin): string {
+export function printableCoin(coin?: Coin): string {
   if (!coin) {
     return "0";
   }
-  if (coin.denom.startsWith("u")) {
-    const ticker = coin.denom.slice(1).toUpperCase();
-    return Decimal.fromAtomics(coin.amount, 6).toString() + thinSpace + ticker;
+  return printableAmount(coin.denom, coin.amount);
+}
+
+export function printableAmount(denom: string, amount: string): string {
+  if (!amount) {
+    return "0";
+  }
+  if (denom.startsWith("u")) {
+    const ticker = denom.slice(1).toUpperCase();
+    return Decimal.fromAtomics(amount, 6).toString() + thinSpace + ticker;
   } else {
-    return coin.amount + thinSpace + coin.denom;
+    return amount + thinSpace + denom;
   }
 }
+
+// export function getAttribute (logs: readonly logs.Log[], key: string): string|undefined {
+//   const key = logs[0].events[1].attributes.find(x => x.key === key);
+//   return logs[0].events[0].attributes.find(x => x.key === key)?.value
+// }

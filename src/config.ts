@@ -8,7 +8,7 @@ export interface AppConfig {
 const local: AppConfig = {
   httpUrl: "http://localhost:1317",
   faucetUrl: "http://localhost:8000/credit",
-  codeId: 2,
+  codeId: 1,
 };
 
 const demo: AppConfig = {

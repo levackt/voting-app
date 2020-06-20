@@ -12,7 +12,6 @@ function ContractList(): JSX.Element {
   const { setError } = useError();
 
   const [contracts, setContracts] = React.useState<readonly ContractItemProps[]>([]);
-
   // get the contracts
   React.useEffect(() => {
     getClient()

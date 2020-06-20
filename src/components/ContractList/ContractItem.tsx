@@ -20,7 +20,7 @@ export function ContractItem({ address, label }: ContractItemProps): JSX.Element
   const classes = useBaseStyles();
 
   return (
-    <div className={classes.listCardContainer}>
+    <div className={classes.dashboardContainer}>
       <Link className={classes.link} to={`/contract/${address}`}>
         <ListItem className={classes.listCard}>
           <ListItemAvatar>

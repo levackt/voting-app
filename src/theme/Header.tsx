@@ -1,10 +1,11 @@
-import { Account } from "@cosmwasm/sdk";
+import { Account } from "@cosmjs/sdk38";
 import { AppBar, IconButton, Toolbar } from "@material-ui/core";
 import MuiTypography from "@material-ui/core/Typography";
 import useScrollTrigger from "@material-ui/core/useScrollTrigger";
 import { ArrowBack } from "@material-ui/icons";
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { useBaseStyles } from "./styles";
 
 import { printableBalance } from "../service/helpers";
 
@@ -34,11 +35,12 @@ export interface HeaderProps {
 export function Header({ account, children }: HeaderProps, props: any): JSX.Element {
   const balance = account ? printableBalance(account.balance) : "(Loading Balance)";
   const address = account ? account.address : "(No Address)";
+  const classes = useBaseStyles();
 
   return (
     <React.Fragment>
       <ElevationScroll {...props}>
-        <AppBar>
+        <AppBar position="fixed" className={classes.appBar}>
           <Toolbar>
             <Link to="/">
               <IconButton edge="start" color="inherit">

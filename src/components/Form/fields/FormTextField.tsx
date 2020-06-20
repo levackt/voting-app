@@ -5,7 +5,7 @@ import * as React from "react";
 interface TextFieldProps {
   name: string;
   type: string;
-  placeholder: string;
+  placeholder?: string;
   InputProps?: any;
 }
 

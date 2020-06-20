@@ -1,21 +1,21 @@
 {
-  "name": "name-app",
+  "name": "voting-app",
   "version": "0.1.0",
   "private": true,
   "license": "Apache-2.0",
   "contributors": [
-    "Ethan Frey <ethanfrey@users.noreply.github.com>",
-    "Simon Warta"
+    "Taariq Levack <levackt@users.noreply.github.com>"
   ],
-  "homepage": "http://confio.github.io/name-app/",
+  "homepage": "https://github.com/enigmampc/voting-app/",
   "dependencies": {
-    "@cosmwasm/sdk": "^0.8.0",
+    "@cosmjs/cosmwasm": "^0.20.0",
+    "@cosmjs/crypto": "^0.20.0",
+    "@cosmjs/math": "^0.20.0",
+    "@cosmjs/sdk38": "^0.20.0",
     "@date-io/core": "^2.4.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.27",
     "@fortawesome/free-regular-svg-icons": "^5.12.1",
     "@fortawesome/react-fontawesome": "^0.1.8",
-    "@iov/crypto": "^2.1.0",
-    "@iov/encoding": "^2.1.0",
     "@material-ui/core": "^4.9.2",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.45",
@@ -32,6 +32,7 @@
     "final-form": "^4.18.7",
     "formik": "^2.1.4",
     "ky": "^0.17.0",
+    "notistack": "^0.9.17",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
@@ -75,6 +76,7 @@
     ]
   },
   "devDependencies": {
+    "@cosmwasm/cli": "^0.8.1",
     "@types/react-redux": "^7.1.7",
     "@types/react-router": "^5.1.4",
     "@types/react-router-dom": "^5.1.3",

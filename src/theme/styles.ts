@@ -1,11 +1,38 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 
+const drawerWidth = 240;
+
 export const useBaseStyles = makeStyles((theme: Theme) =>
   createStyles({
     contractLogicContainer: {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
+    },
+    table: {
+      background: "#ebf5fc",
+      boxShadow: "-5px -5px 15px rgba(255, 255, 255, 0.8), 5px 5px 10px rgba(0, 0, 0, 0.1)",
+      borderRadius: "25px",
+    },
+    instructions: {
+      background: "#ebf5fc",
+      boxShadow: "-5px -5px 15px rgba(255, 255, 255, 0.8), 5px 5px 10px rgba(0, 0, 0, 0.1)",
+      borderRadius: "25px",
+    },
+    exPanel: {
+      // height: "20px",
+    },
+    polls: {
+
+    },
+    backdrop: {
+      zIndex: theme.zIndex.drawer + 1,
+      color: '#fff',
+    },
+    heading: {
+      background: "#ebf5fc",
+      boxShadow: "-5px -5px 15px rgba(255, 255, 255, 0.8), 5px 5px 10px rgba(0, 0, 0, 0.1)",
+      borderRadius: "25px",
     },
     card: {
       width: "80vw",
@@ -14,7 +41,7 @@ export const useBaseStyles = makeStyles((theme: Theme) =>
       background: "#ebf5fc",
       boxShadow: "-5px -5px 15px rgba(255, 255, 255, 0.8), 5px 5px 10px rgba(0, 0, 0, 0.1)",
       borderRadius: "25px",
-      maxWidth: "600px",
+      minWidth: "800px",
       "& ul": {
         listStyleType: "none",
         padding: "0",
@@ -68,11 +95,31 @@ export const useBaseStyles = makeStyles((theme: Theme) =>
         padding: "30px 40px",
       },
     },
-    listCardContainer: {
+    dashboardContainer: {
       position: "relative",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
+    },
+    root: {
+      display: 'flex',
+    },
+    appBar: {
+      zIndex: theme.zIndex.drawer + 1,
+    },
+    drawer: {
+      width: drawerWidth,
+      flexShrink: 0,
+    },
+    drawerPaper: {
+      width: drawerWidth,
+    },
+    drawerContainer: {
+      overflow: 'auto',
+    },
+    content: {
+      flexGrow: 1,
+      padding: theme.spacing(3),
     },
     listCard: {
       flexDirection: "column-reverse",
@@ -111,11 +158,14 @@ export const useBaseStyles = makeStyles((theme: Theme) =>
       color: "#3d5af1",
     },
     form: {
-      height: "150px",
+      background: "#ebf5fc",
+      boxShadow: "-5px -5px 15px rgba(255, 255, 255, 0.8), 5px 5px 10px rgba(0, 0, 0, 0.1)",
+      borderRadius: "25px",
+      minWidth: "100px",
       display: "flex",
       flexDirection: "column",
       justifyContent: "space-around",
-      maxWidth: "600px",
+      maxWidth: "800px",
       padding: "10px",
       "& p": {
         fontSize: "0.75rem",
@@ -124,7 +174,7 @@ export const useBaseStyles = makeStyles((theme: Theme) =>
         marginTop: "0",
       },
       [theme.breakpoints.up("sm")]: {
-        height: "150px",
+        height: "250px",
         justifyContent: "space-around",
         margin: "20px",
         padding: "20px",
@@ -150,16 +200,6 @@ export const useBaseStyles = makeStyles((theme: Theme) =>
         color: "#3d5af1",
         boxShadow: "inset -2px -2px 6px rgba(255, 255, 255, 1), inset 2px 2px 6px rgba(0, 0, 0, 0.1);",
       },
-    },
-    isFree: {
-      color: "#00BB6D",
-      marginBottom: "20px",
-      paddingLeft: "8px",
-    },
-    isOwned: {
-      color: "#ff304f",
-      marginBottom: "20px",
-      paddingLeft: "8px",
     },
     bottomSpacer: {
       marginBottom: "8px",

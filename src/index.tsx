@@ -8,20 +8,23 @@ import { config } from "./config";
 import Routes from "./routes";
 import { AccountProvider, BurnerWalletProvider, ErrorProvider } from "./service";
 import * as serviceWorker from "./serviceWorker";
+import { SnackbarProvider } from 'notistack';
 
 const rootEl = document.getElementById("root");
 
 const render = (Component: React.ComponentType): void => {
   ReactDOM.render(
-    <ErrorProvider>
-      <BurnerWalletProvider config={config}>
-        <AccountProvider>
-          <Splash>
-            <Component />
-          </Splash>
-        </AccountProvider>
-      </BurnerWalletProvider>
-    </ErrorProvider>,
+    <SnackbarProvider maxSnack={3}>
+      <ErrorProvider>
+        <BurnerWalletProvider config={config}>
+          <AccountProvider>
+            <Splash>
+              <Component />
+            </Splash>
+          </AccountProvider>
+        </BurnerWalletProvider>
+      </ErrorProvider>
+    </SnackbarProvider>,
     rootEl,
   );
 };
