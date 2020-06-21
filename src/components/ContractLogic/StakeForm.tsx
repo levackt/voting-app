@@ -1,5 +1,6 @@
 import { Form, Formik } from "formik";
 import * as React from "react";
+import MuiTypography from "@material-ui/core/Typography";
 
 import { Button } from "../../theme";
 import { useBaseStyles } from "../../theme";
@@ -29,8 +30,8 @@ export const StakeForm: React.FC<StakeFormProps> = ({ handleStake, loading }: St
       }}
     >
       {({ handleSubmit }) => (
-        <Form onSubmit={handleSubmit} className={classes.form}>
-          <div className={classes.input}>
+        <Form onSubmit={handleSubmit} className={classes.tokenForm}>
+          <div className={classes.tokenOpsInput}>
             <FormTextField placeholder="0" name={STAKE_AMOUNT_FIELD} type="text"/>
           </div>
           <div>
@@ -38,6 +39,7 @@ export const StakeForm: React.FC<StakeFormProps> = ({ handleStake, loading }: St
               Stake
             </Button>
           </div>
+          
         </Form>
       )}
     </Formik>

@@ -186,6 +186,62 @@ export const useBaseStyles = makeStyles((theme: Theme) =>
         },
       },
     },
+    tokenOps: {
+      background: "#ebf5fc",
+      minWidth: "130px",
+      borderRadius: "25px",
+      maxWidth: "200px",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-around",
+      
+    },
+    tokenForm: {
+      background: "#ebf5fc",
+      display: "flex",
+      flexDirection: "column",
+      "& p": {
+        fontSize: "0.75rem",
+      },
+      "& .MuiFormHelperText-root.Mui-error": {
+        marginTop: "0",
+      },
+      [theme.breakpoints.up("sm")]: {
+        justifyContent: "space-around",
+        margin: "5px",
+        padding: "10px",
+        "& p": {
+          fontSize: "1rem",
+        },
+        "& .MuiFormHelperText-root.Mui-error": {
+          marginTop: "3px",
+        },
+      },
+    },
+    pollInput: {
+      display: "flex",
+      "& input": {
+        minWidth: "100px",
+      },
+    },
+    quorumCol: {
+      display: "flex",
+      minWidth: "40px",
+    },
+    tokenOpsInput: {
+      display: "flex",
+      "& input": {
+        height: "30px",
+        background: "#ebf5fc",
+        border: "none",
+        outline: "none",
+        borderRadius: "10px",
+        padding: "5px 15px",
+        fontSize: "14px",
+        color: "#3d5af1",
+        boxShadow: "inset -2px -2px 6px rgba(255, 255, 255, 1), inset 2px 2px 6px rgba(0, 0, 0, 0.1);",
+      },
+    },
     input: {
       display: "flex",
       "& input": {

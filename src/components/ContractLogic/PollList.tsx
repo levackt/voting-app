@@ -15,8 +15,10 @@ import Paper from '@material-ui/core/Paper';
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import ThumbDownIcon from "@material-ui/icons/ThumbDown";
 import { Poll } from "./VotingDetails";
+import SyncIcon from '@material-ui/icons/Sync';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import { TextField } from "@material-ui/core";
+import { PollUpdate } from "./PollUpdate";
 
 export const WEIGHT_FIELD = "weightField";
 
@@ -35,9 +37,9 @@ export interface PollListProps {
   readonly contractAddress: string;
   readonly polls: Map<number, Poll>;
   readonly loading: boolean;
-  readonly tokenBalance?: number;
   readonly handleCastVote: (weight: number, vote: string, poll: Poll) => void;
   readonly handleTallyPoll: (poll: Poll) => void;
+  readonly handleRefreshPoll: (poll: Poll) => void;
 }
 
 const StyledTableRow = withStyles((theme) => ({
@@ -57,7 +59,7 @@ export function PollList(props: PollListProps): JSX.Element {
   const classes = useBaseStyles();
   const { account } = useAccount();
   const { address, getClient } = useSdk();
-  const { handleCastVote, handleTallyPoll, tokenBalance, loading, polls } = props;
+  const { handleCastVote, handleTallyPoll, handleRefreshPoll, loading, polls } = props;
   const [state, setState] = React.useState<State>({ pollWeightMap: new Map<number, number>() });
 
   const handleYesVote = (poll: Poll) => {
@@ -72,11 +74,11 @@ export function PollList(props: PollListProps): JSX.Element {
       handleCastVote(weight, vote, poll);
   };
 
-  const canTallyPoll = (poll: Poll) => {
-      return !props.loading && poll.creator === address && 
-        poll.status === "InProgress"
-      //todo check block height etc
-  };
+  // const canTallyPoll = (poll: Poll) => {
+  //     return !loading && poll.creator === address && 
+  //       poll.status === "InProgress"
+  //     //todo check block height etc
+  // };
 
   const canCastVote = (poll: Poll) => {
       const pollWeightMap = state.pollWeightMap;
@@ -104,6 +106,14 @@ export function PollList(props: PollListProps): JSX.Element {
       setState({pollWeightMap});
   }
 
+  const pollEnded = (poll: Poll) : boolean => {
+    return poll.status !== "InProgress"
+  }
+
+  const pollInProgress = (poll: Poll) : boolean => {
+    return poll.status === "InProgress"
+  }
+
   return (
       <div>
         <TableContainer component={Paper} className={classes.polls}>
@@ -114,15 +124,14 @@ export function PollList(props: PollListProps): JSX.Element {
                 <StyledTableCell align="left">Weight</StyledTableCell>
                 <StyledTableCell align="right">Description</StyledTableCell>
                 <StyledTableCell align="right">Quorum</StyledTableCell>
-                <StyledTableCell align="right">Status</StyledTableCell>
                 <StyledTableCell align="right">Time remaining</StyledTableCell>
-                <StyledTableCell align="right">Tally Poll</StyledTableCell>
+                <StyledTableCell align="right"></StyledTableCell>
             </TableRow>
             </TableHead>
             <TableBody>
                 {Array.from(polls.values()).map((poll: Poll) => (
                     <StyledTableRow key={poll.pollId}>
-                        <StyledTableCell  min-width="200px">
+                        <StyledTableCell>
                             <IconButton disabled={!canCastVote(poll)}
                             color="inherit" onClick={(event) => handleYesVote(poll)} aria-label="Yea">
                                 <ThumbUpIcon/>
@@ -133,19 +142,20 @@ export function PollList(props: PollListProps): JSX.Element {
                             </IconButton>
                         </StyledTableCell>
                         <StyledTableCell size="small" align="left">
-                            <TextField name={WEIGHT_FIELD} type="number" disabled={poll.status !== "InProgress"}
+                            <TextField className={classes.pollInput} 
+                                name={WEIGHT_FIELD} type="number" 
+                                disabled={poll.status !== "InProgress"}
                                 onChange={(event) => handleWeightChange(poll.pollId, event)}/>
                         </StyledTableCell>
                         <StyledTableCell align="right" component="th" scope="row">
                             {poll.description}
                         </StyledTableCell>
                         <StyledTableCell align="right">{poll.quorum}</StyledTableCell>
-                        <StyledTableCell align="right">{poll.status}</StyledTableCell>
                         <StyledTableCell align="right"></StyledTableCell>
                         <StyledTableCell align="right">
-                            <Button type="submit" onClick={(event) => handleTallyPoll(poll)} disabled={!canTallyPoll(poll)}>
-                                <AssignmentTurnedInIcon/>
-                            </Button>
+                          <PollUpdate address={address} handleTallyPoll={handleTallyPoll}
+                            loading={loading} handleRefreshPoll={handleRefreshPoll} poll={poll}
+                          />
                         </StyledTableCell>
                     </StyledTableRow>
                 ))}

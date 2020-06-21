@@ -7,27 +7,23 @@ import { FormValues } from "../Form";
 import { FormTextField } from "../Form/fields/FormTextField";
 import { CreatePollValidationSchema } from "../Form/validationSchema";
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Tooltip from "@material-ui/core/Tooltip";
-import { IconButton } from '@material-ui/core';
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 
 export const QUORUM_FIELD = "quorumField";
 export const DESCRIPTION_FIELD = "descriptionField";
 export const START_HEIGHT_FIELD = "startHeightField";
 export const END_HEIGHT_FIELD = "endHeightField";
 
-interface CreatePollFormProps {
+interface CreatePollProps {
   readonly loading: boolean;
   readonly handleCreatePoll: (values: FormValues) => void;
 }
 
-export const CreatePoll: React.FC<CreatePollFormProps> = ({ handleCreatePoll, loading }: CreatePollFormProps) => {
+export const CreatePoll: React.FC<CreatePollProps> = ({ handleCreatePoll, loading }: CreatePollProps) => {
   const classes = useBaseStyles();
   const [open, setOpen] = React.useState(false);
   

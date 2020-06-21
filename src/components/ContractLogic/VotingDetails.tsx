@@ -163,7 +163,6 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
       enqueueMessage('Vote cast', 'success');
       
       refreshAccount();
-      refreshTokenBalance();
       setState({ ...state, loading: false });
     } catch (err) {
       setError(err);
@@ -222,16 +221,6 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
         setState({ ...state, loading: false });
         setError(err);
       });
-    // await getClient()
-    //     /* eslint-disable-next-line @typescript-eslint/camelcase */
-    //     .queryContractSmart(contractAddress, { token_stake: { address } })
-    //     .then(res => {
-    //       setState({ ...state, tokenBalance: res.token_balance, loading: false });
-    //     })
-    //     .catch(err => {
-    //       setState({ loading: false });
-    //       setError(err);
-    //     });
   };
 
   const loadPolls = async (pollCount: number, stakedBalance: number, tokenBalance: number): Promise<void> => {
@@ -263,6 +252,18 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
     setState({...state, polls: polls, loading: false, stakedBalance, tokenBalance, pollCount});
     
   };
+
+  const doRefreshPoll = async (poll: Poll) : Promise<void> => {
+    await getClient()
+        /* eslint-disable-next-line @typescript-eslint/camelcase */
+      .queryContractSmart(contractAddress, { poll: { poll_id: poll.pollId} })
+      .then(res => {
+          poll.status = res.status;
+      })
+      .catch(err => {
+          setError(err);
+      });
+  }
 
   const doCreatePoll = async (values: FormValues): Promise<void> => {
     const quorum = values[QUORUM_FIELD];
@@ -345,14 +346,13 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
             <CreatePoll handleCreatePoll={doCreatePoll} loading={state.loading}/>
           </Grid>
           <Grid item xs={2}>
-            <Grid container spacing={3}>
-
+            <Grid container spacing={1} className={classes.tokenOps}>
                   <MuiTypography variant="h6">
                     Token Operations:
                   </MuiTypography>
                 <Grid item xs={12}>
                   <StakeForm handleStake={doStake} loading={state.loading}/>
-                  <Divider />
+                  {/* <Divider /> */}
                 </Grid>
                 <Grid item xs={12}>
                   <WithdrawForm handleWithdraw={doWithdraw} loading={state.loading} />
@@ -363,8 +363,7 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
             {state.polls &&
               <PollList contractAddress={contractAddress} polls={state.polls} 
                 loading={state.loading} handleTallyPoll={doTallyPoll} 
-                handleCastVote={doCastVote} 
-                tokenBalance={state.tokenBalance}/>
+                handleCastVote={doCastVote} handleRefreshPoll={doRefreshPoll}/>
             }
           </Grid>
         </Grid>
