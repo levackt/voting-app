@@ -1,7 +1,6 @@
 import { Form, Formik } from "formik";
 import * as React from "react";
 
-import MuiTypography from "@material-ui/core/Typography";
 import { Button } from "../../theme";
 import { useBaseStyles } from "../../theme";
 import { FormValues } from "../Form";
@@ -11,11 +10,11 @@ import { WithdrawValidationSchema } from "../Form/validationSchema";
 export const WITHDRAW_AMOUNT_FIELD = "withdrawAmountField";
 
 interface WithdrawFormProps {
-  readonly loading: boolean;
   readonly handleWithdraw: (values: FormValues) => void;
+  readonly stakedBalance?: number;
 }
 
-export const WithdrawForm: React.FC<WithdrawFormProps> = ({ handleWithdraw, loading }: WithdrawFormProps) => {
+export const WithdrawForm: React.FC<WithdrawFormProps> = ({ handleWithdraw, stakedBalance }: WithdrawFormProps) => {
   const classes = useBaseStyles();
 
   return (
@@ -25,6 +24,7 @@ export const WithdrawForm: React.FC<WithdrawFormProps> = ({ handleWithdraw, load
       }}
       validationSchema={WithdrawValidationSchema}
       onSubmit={async ({ withdrawAmountField }, { setSubmitting }) => {
+        // todo validate, staked >= withdraw amount etc etc
         setSubmitting(true);
         handleWithdraw({ withdrawAmountField });
       }}
@@ -35,7 +35,7 @@ export const WithdrawForm: React.FC<WithdrawFormProps> = ({ handleWithdraw, load
             <FormTextField placeholder="0" name={WITHDRAW_AMOUNT_FIELD} type="text" />
           </div>
           <div>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={!stakedBalance}>
               Withdraw
             </Button>
           </div>

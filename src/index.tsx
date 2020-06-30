@@ -6,7 +6,7 @@ import ReactDOM from "react-dom";
 import Splash from "./components/Splash";
 import { config } from "./config";
 import Routes from "./routes";
-import { AccountProvider, BurnerWalletProvider, ErrorProvider } from "./service";
+import { AccountProvider, BurnerWalletProvider, ErrorProvider, BlockHeightProvider } from "./service";
 import * as serviceWorker from "./serviceWorker";
 import { SnackbarProvider } from 'notistack';
 
@@ -17,11 +17,13 @@ const render = (Component: React.ComponentType): void => {
     <SnackbarProvider maxSnack={3}>
       <ErrorProvider>
         <BurnerWalletProvider config={config}>
-          <AccountProvider>
-            <Splash>
-              <Component />
-            </Splash>
-          </AccountProvider>
+          <BlockHeightProvider>
+            <AccountProvider>
+              <Splash>
+                <Component />
+              </Splash>
+            </AccountProvider>
+          </BlockHeightProvider>
         </BurnerWalletProvider>
       </ErrorProvider>
     </SnackbarProvider>,

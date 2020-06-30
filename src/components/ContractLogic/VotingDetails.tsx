@@ -1,33 +1,19 @@
-import { Coin, coin } from "@cosmjs/sdk38";
+import { coin } from "@cosmjs/sdk38";
 import MuiTypography from "@material-ui/core/Typography";
 import * as React from "react";
-import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import TextField from '@material-ui/core/TextField';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import { STAKE_AMOUNT_FIELD, StakeForm } from "./StakeForm";
 import { WITHDRAW_AMOUNT_FIELD, WithdrawForm } from "./WithdrawForm";
 import { useAccount, useError, useSdk } from "../../service";
-// import { getAttribute } from "../../service/helpers";
-import { Button, useBaseStyles } from "../../theme";
+import { useBaseStyles } from "../../theme";
 import { FormValues } from "../Form";
 import { Dashboard } from "./Dashboard";
-import { WEIGHT_FIELD, PollList } from "./PollList";
 import { QUORUM_FIELD, DESCRIPTION_FIELD, START_HEIGHT_FIELD, END_HEIGHT_FIELD, CreatePoll } from "./CreatePoll";
-import HowToVoteIcon from '@material-ui/icons/HowToVote';
 import { useSnackbar, VariantType } from 'notistack';
 import Grid from '@material-ui/core/Grid';
 import { Instructions } from "./Instructions";
 import { Loading } from "./Loading";
 import Box from '@material-ui/core/Box';
+import { PollList } from "./PollList";
 
 export interface InitMsg {
   readonly denom?: string;
@@ -37,8 +23,8 @@ export interface InitMsg {
 export interface CreatePollMsg {
   readonly quorum_percentage: number;
   readonly description: string;
-  startHeight?: number;
-  endHeight?: number;
+  start_height?: number;
+  end_height?: number;
 }
 
 export interface VotingDetailsProps {
@@ -56,8 +42,10 @@ export interface State {
   readonly polls?: Map<number, Poll>;
 }
 
-function createPollData(pollId: number, creator: string, description: string, quorum: number, status: string) {
-    const poll: Poll = {pollId, creator, description, quorum, status};
+function createPollData(pollId: number, creator: string, description: string, 
+  quorum: number, status: string, startHeight: number, endHeight: number) {
+    const poll: Poll = {pollId, creator, description, quorum, status, 
+    startHeight, endHeight};
     return poll;
 }
 
@@ -67,18 +55,20 @@ export interface Poll {
     readonly creator: string;
     readonly stake?: number;
     readonly description: string;
-    readonly quorum: number;
-    readonly blocksRemaining?: number;
+    readonly quorum?: number;
+    readonly endHeight?: number;
+    readonly startHeight?: number;
     readonly result?: string;
     status?: string;
 }
 
 export function VotingDetails(props: VotingDetailsProps): JSX.Element {
   const classes = useBaseStyles();
-  const { owner, contractAddress, contract } = props;
+  const { contractAddress, contract } = props;
   const { address, getClient } = useSdk();
   const { setError } = useError();
   const { refreshAccount } = useAccount();
+  
   const { enqueueSnackbar } = useSnackbar();
 
   const [state, setState] = React.useState<State>({ loading: false });
@@ -92,11 +82,11 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
       .queryContractSmart(contractAddress, { token_stake: { address } })
       .then(res => {
           return res
-      }).then((config) => {
+      }).then((stake) => {
         getClient()
           .queryContractSmart(contractAddress, { config: { } })
           .then(res => {
-            loadPolls(res.poll_count, res.staked_tokens, config.token_balance);
+            loadPolls(res.poll_count, res.staked_tokens, stake.token_balance);
           })
       })
       .catch(err => {
@@ -149,10 +139,11 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
       setState({ ...state, loading: false });
     } catch (err) {
       setError(err);
+      setState({ ...state, loading: false });
     }
   };
 
-  const doCastVote = async (weight: number, vote: string, poll: Poll): Promise<void> => {
+  const doCastVote = async (vote: string, poll: Poll, weight: number): Promise<void> => {
     let castVoteMsg = { cast_vote: { weight: String(weight), encrypted_vote: vote, poll_id: poll.pollId } }
     setState({ ...state, loading: true });
     try {
@@ -175,10 +166,7 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
     
     setState({ ...state, loading: true });
     try {
-      const result = await getClient().execute(
-        contractAddress,
-        tallyMsg
-      );
+      const result = await getClient().execute(contractAddress, tallyMsg);
       const attributes = result.logs[0].events[1].attributes;
       let attribute = attributes.find(x => x.key === "passed");
       const passed = attribute && attribute.value === "true";
@@ -199,6 +187,7 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
       setState({ ...state, loading: false });
     } catch (err) {
       setError(err);
+      setState({ ...state, loading: false });
     }
   }
 
@@ -237,13 +226,13 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
           .then(res => {
               const creator = res.creator;
               const status = res.status;
-              const quorum = parseInt(res.quorum_percentage);
+              const quorum = res.quorum_percentage;
               const description = res.description;
-              
-              //todo start and end height (time remaining)
-              // const endHeight = res.end_height;
-              // const startHeight = res.start_height;
-              polls.set(pollId, createPollData(pollId, creator, description, quorum, status));
+              const endHeight = res.end_height;
+              const startHeight = res.start_height;
+              polls.set(pollId, createPollData(
+                pollId, creator, description, quorum, status, startHeight, endHeight
+              ));
           })
           .catch(err => {
               setError(err);
@@ -270,16 +259,33 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
     const description = values[DESCRIPTION_FIELD];
     const startHeight = values[START_HEIGHT_FIELD];
     const endHeight = values[END_HEIGHT_FIELD];
+    
+    let blockHeight = await getClient().getHeight();
+
+    if (endHeight && parseInt(endHeight) > 0){
+      if (!blockHeight) {
+        setError("Failed to create poll, error getting block height")
+        return;
+      } else if (blockHeight > parseInt(endHeight)) {
+        setError("Poll cannot end in the past");
+        return;
+      }
+    }
 
     setState({ ...state, loading: true });
 
     let createMessage: CreatePollMsg = {quorum_percentage: parseInt(quorum), description}
+    
+    let start: number;
+    let end: number;
 
     if (startHeight) {
-      createMessage.startHeight = parseInt(startHeight);
+      start = parseInt(startHeight);
+      createMessage.start_height = start;
     } 
     if (endHeight) {
-      createMessage.endHeight = parseInt(endHeight);
+      end = parseInt(endHeight)
+      createMessage.end_height = end;
     } 
 
     try {
@@ -289,7 +295,7 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
       );
       const attribute = result.logs[0].events[1].attributes.find(x => x.key === "poll_id");
       
-      if (attribute == undefined) {
+      if (attribute === undefined) {
         setState({ ...state, loading: false });
         // todo get error from logs
         setError("failed to create poll");
@@ -304,17 +310,18 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
         .then(res => {
             const creator = res.creator;
             const status = res.status;
-            const quorum = parseInt(res.quorum_percentage);
+            const quorum = res.quorum_percentage;
             const description = res.description;
-
             const polls: Map<number, Poll> = state.polls || new Map();
-            polls.set(pollId, createPollData(pollId, creator, description, quorum, status));
+            polls.set(pollId, createPollData(
+                pollId, creator, description, quorum, status, start, end
+              )
+            );
             setState({ ...state, polls: polls });
         })
         .catch(err => {
             setError(err);
         });
-      // todo check if successful etc
     } catch (err) {
       setError(err);
     }
@@ -351,17 +358,20 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
                     Token Operations:
                   </MuiTypography>
                 <Grid item xs={12}>
-                  <StakeForm handleStake={doStake} loading={state.loading}/>
-                  {/* <Divider /> */}
+                  <StakeForm handleStake={doStake} 
+                    tokenBalance={state.tokenBalance}/>
                 </Grid>
                 <Grid item xs={12}>
-                  <WithdrawForm handleWithdraw={doWithdraw} loading={state.loading} />
+                  <WithdrawForm handleWithdraw={doWithdraw} 
+                    stakedBalance={state.stakedBalance}
+                    />
                 </Grid>
             </Grid>
           </Grid>
           <Grid item xs={10}>   
-            {state.polls &&
+            {state.polls && state.stakedBalance &&
               <PollList contractAddress={contractAddress} polls={state.polls} 
+                stakedBalance={state.stakedBalance}
                 loading={state.loading} handleTallyPoll={doTallyPoll} 
                 handleCastVote={doCastVote} handleRefreshPoll={doRefreshPoll}/>
             }

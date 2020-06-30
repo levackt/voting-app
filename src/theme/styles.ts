@@ -19,12 +19,6 @@ export const useBaseStyles = makeStyles((theme: Theme) =>
       boxShadow: "-5px -5px 15px rgba(255, 255, 255, 0.8), 5px 5px 10px rgba(0, 0, 0, 0.1)",
       borderRadius: "25px",
     },
-    exPanel: {
-      // height: "20px",
-    },
-    polls: {
-
-    },
     backdrop: {
       zIndex: theme.zIndex.drawer + 1,
       color: '#fff',
@@ -107,6 +101,14 @@ export const useBaseStyles = makeStyles((theme: Theme) =>
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
     },
+    blockHeight: {      
+      padding: theme.spacing(1),
+      marginLeft: theme.spacing(50),
+      flexGrow: 1,
+    },
+    account: {
+      padding: theme.spacing(1),
+    },
     drawer: {
       width: drawerWidth,
       flexShrink: 0,
@@ -157,15 +159,46 @@ export const useBaseStyles = makeStyles((theme: Theme) =>
       textDecoration: "none",
       color: "#3d5af1",
     },
+    createPollDialog: {
+      background: "#ebf5fc",
+      height: "550px",
+    },
+    createPollTitle: {
+      background: "#ebf5fc",
+    },
+    createPollForm: {
+      background: "#ebf5fc",
+      boxShadow: "-5px -5px 5px rgba(255, 255, 255, 0.8), 5px 5px 10px rgba(0, 0, 0, 0.1)",
+      display: "flex",
+      justifyContent: "space-around",
+      padding: "10px",
+      "& p": {
+        fontSize: "0.75rem",
+      },
+      "& .MuiFormHelperText-root.Mui-error": {
+        marginTop: "0",
+      },
+      [theme.breakpoints.up("sm")]: {
+        height: "440px",
+        width: "350px",
+        justifyContent: "space-around",
+        margin: "20px",
+        padding: "20px",
+        "& p": {
+          fontSize: "1rem",
+        },
+        "& .MuiFormHelperText-root.Mui-error": {
+          marginTop: "3px",
+        },
+      },
+    },
     form: {
       background: "#ebf5fc",
       boxShadow: "-5px -5px 15px rgba(255, 255, 255, 0.8), 5px 5px 10px rgba(0, 0, 0, 0.1)",
       borderRadius: "25px",
-      minWidth: "100px",
       display: "flex",
       flexDirection: "column",
       justifyContent: "space-around",
-      maxWidth: "800px",
       padding: "10px",
       "& p": {
         fontSize: "0.75rem",
@@ -235,7 +268,7 @@ export const useBaseStyles = makeStyles((theme: Theme) =>
         background: "#ebf5fc",
         border: "none",
         outline: "none",
-        borderRadius: "10px",
+        borderRadius: "20px",
         padding: "5px 15px",
         fontSize: "14px",
         color: "#3d5af1",
@@ -253,6 +286,28 @@ export const useBaseStyles = makeStyles((theme: Theme) =>
         borderRadius: "20px",
         padding: "5px 15px",
         fontSize: "18px",
+        color: "#3d5af1",
+        boxShadow: "inset -2px -2px 6px rgba(255, 255, 255, 1), inset 2px 2px 6px rgba(0, 0, 0, 0.1);",
+      },
+    },
+    createPollCancel: {
+        width: "50%",
+        color: "secondary",
+        padding: "15px 15px",
+    },
+    createPollSubmit: {
+        width: "50%",
+        padding: "15px 15px",
+    },
+    createPollInput: {
+      display: "flex",
+      "& input": {
+        height: "25px",
+        background: "#ebf5fc",
+        border: "none",
+        outline: "none",
+        padding: "15px 15px",
+        fontSize: "14px",
         color: "#3d5af1",
         boxShadow: "inset -2px -2px 6px rgba(255, 255, 255, 1), inset 2px 2px 6px rgba(0, 0, 0, 0.1);",
       },

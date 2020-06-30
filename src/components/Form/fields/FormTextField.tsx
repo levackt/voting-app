@@ -22,7 +22,6 @@ export const FormTextField: React.FC<TextFieldProps & FieldAttributes<{}>> = ({
     return (
       <TextField
         id="outlined-number"
-        variant="outlined"
         type={type}
         label={placeholder}
         InputProps={InputProps}

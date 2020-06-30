@@ -20,9 +20,13 @@ cd packages/faucet
 yarn dev-start
 ```
 
+
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `node scripts/deploy_voting.js`
+Uploads the contract code and instantiates 2 voting contracts
 
 ### `yarn start`
 

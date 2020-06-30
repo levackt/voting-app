@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 const { SigningCosmWasmClient } = require("@cosmjs/cosmwasm");
 
-const { Secp256k1Pen } = require("@cosmjs/sdk38");
+const { Secp256k1Pen, coins } = require("@cosmjs/sdk38");
 const fs = require("fs");
 
 const httpUrl = "http://localhost:1317";
@@ -24,6 +24,11 @@ const contract1 = {
     denom: "ucosm",
     name: "voting contract",
   },
+  createPollMsg: {
+    description: "test poll",
+    start_height: 100,
+    end_height: 10000
+  },
 };
 
 const contract2 = {
@@ -31,27 +36,54 @@ const contract2 = {
     denom: "ustake",
     name: "another voting contract",
   },
+  createPollMsg: {
+    quorum: 10,
+    description: "another poll",
+    start_height: 100,
+    end_height: 10000
+  },
 };
 
-const withdrawMsg = {
-  handleMsg: {
-    amount: 1,
+const customFees = {
+  upload: {
+    amount: coins(25000, "ucosm"),
+    gas: "2000000", // two million
+  },
+  init: {
+    amount: coins(12500, "ucosm"),
+    gas: "500000", // 500k
+  },
+  exec: {
+    amount: coins(5000, "ucosm"),
+    gas: "200000", // 200k
+  },
+  send: {
+    amount: coins(2000, "ucosm"),
+    gas: "80000", // 80k
   },
 };
 
 async function main() {
+  
   const pen = await Secp256k1Pen.fromMnemonic(faucet.mnemonic);
-  const client = new SigningCosmWasmClient(httpUrl, faucet.address, signBytes => pen.sign(signBytes));
+  const client = new SigningCosmWasmClient(httpUrl, faucet.address, signBytes => pen.sign(signBytes), customFees);
 
   const wasm = fs.readFileSync(__dirname + "/../contracts/contract.wasm");
   const uploadReceipt = await client.upload(wasm, codeMeta, "Voting code");
   console.info(`Upload succeeded. Receipt: ${JSON.stringify(uploadReceipt)}`);
 
-  for (const { initMsg } of [contract1, contract2]) {
+  for (const { initMsg, createPollMsg} of [contract1, contract2]) {
+  // for (const { initMsg, createPollMsg } of [contract1]) {
     const memo = `Create a voting instance "${initMsg.name}"`;
     const { contractAddress } = await client.instantiate(uploadReceipt.codeId, initMsg, initMsg.name, memo);
     console.info(`Contract "${initMsg.name}" instantiated at ${contractAddress}`);
 
+    console.info(`Creating poll : "${createPollMsg.description}"`);
+
+    const result = await client.execute(
+      contractAddress, {create_poll: createPollMsg}
+    );
+    console.info(`Result: ${JSON.stringify(result)}`)
 
   }
 }

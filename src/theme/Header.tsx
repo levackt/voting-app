@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { useBaseStyles } from "./styles";
 
 import { printableBalance } from "../service/helpers";
+import { BlockHeight } from "./BlockHeight";
 
 interface ElevationScrollProps {
   readonly children: any;
@@ -42,7 +43,7 @@ export function Header({ account, children }: HeaderProps, props: any): JSX.Elem
       <ElevationScroll {...props}>
         <AppBar position="fixed" className={classes.appBar}>
           <Toolbar>
-            <Link to="/">
+            <Link to="/" className={classes.account}>
               <IconButton edge="start" color="inherit">
                 <ArrowBack />
               </IconButton>
@@ -50,6 +51,7 @@ export function Header({ account, children }: HeaderProps, props: any): JSX.Elem
             <MuiTypography variant="h6">
               {address} - {balance}
             </MuiTypography>
+            <BlockHeight/>
           </Toolbar>
         </AppBar>
       </ElevationScroll>

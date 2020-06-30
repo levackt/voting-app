@@ -1,6 +1,5 @@
 import { Form, Formik } from "formik";
 import * as React from "react";
-import MuiTypography from "@material-ui/core/Typography";
 
 import { Button } from "../../theme";
 import { useBaseStyles } from "../../theme";
@@ -11,11 +10,11 @@ import { StakeValidationSchema } from "../Form/validationSchema";
 export const STAKE_AMOUNT_FIELD = "stakeAmountField";
 
 interface StakeFormProps {
-  readonly loading: boolean;
+  readonly tokenBalance?: number;
   readonly handleStake: (values: FormValues) => void;
 }
 
-export const StakeForm: React.FC<StakeFormProps> = ({ handleStake, loading }: StakeFormProps) => {
+export const StakeForm: React.FC<StakeFormProps> = ({ handleStake, tokenBalance }: StakeFormProps) => {
   const classes = useBaseStyles();
 
   return (
@@ -25,6 +24,7 @@ export const StakeForm: React.FC<StakeFormProps> = ({ handleStake, loading }: St
       }}
       validationSchema={StakeValidationSchema}
       onSubmit={async ({ stakeAmountField }, { setSubmitting }) => {
+        // todo validate, balance >= stake etc
         setSubmitting(true);
         handleStake({ stakeAmountField });
       }}
@@ -35,11 +35,10 @@ export const StakeForm: React.FC<StakeFormProps> = ({ handleStake, loading }: St
             <FormTextField placeholder="0" name={STAKE_AMOUNT_FIELD} type="text"/>
           </div>
           <div>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={!tokenBalance}>
               Stake
             </Button>
           </div>
-          
         </Form>
       )}
     </Formik>

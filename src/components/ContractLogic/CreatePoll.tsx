@@ -37,10 +37,10 @@ export const CreatePoll: React.FC<CreatePollProps> = ({ handleCreatePoll, loadin
 
     return (
         <div>
-            <Button type="submit" disabled={loading} onClick={handleClickOpen}>Create New Poll</Button>
+            <Button type="submit"  disabled={loading} onClick={handleClickOpen}>Create New Poll</Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">Create New Poll</DialogTitle>
-                <DialogContent>
+                <DialogTitle className={classes.createPollTitle} id="form-dialog-title">Create New Poll</DialogTitle>
+                <DialogContent className={classes.createPollDialog}>
                     <Formik
                         initialValues={{
                             quorumField: "",
@@ -57,30 +57,56 @@ export const CreatePoll: React.FC<CreatePollProps> = ({ handleCreatePoll, loadin
                         }}
                     >
                         {({ handleSubmit }) => (
-                        <Form onSubmit={handleSubmit} className={classes.form}>
-                            <div className={classes.input}>
-                                <Grid>
+                        <Form onSubmit={handleSubmit} className={classes.createPollForm}>
+                            <div className={classes.createPollInput}>
+                                <Grid container direction={"row"}>
                                     <Grid item xs={12}>
-                                        <FormTextField placeholder="Quorum" name={QUORUM_FIELD} type="number" />
+                                    <FormControlLabel
+                                        control={
+                                            <FormTextField placeholder="" name={QUORUM_FIELD} type="number" required={true}/>
+                                        }
+                                        label="Quorum"
+                                        labelPlacement="end"
+                                    />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <FormTextField placeholder="Secret poll" name={DESCRIPTION_FIELD} type="text" />
+                                        <FormControlLabel
+                                            control={
+                                                <FormTextField placeholder="" name={DESCRIPTION_FIELD} type="text" required={true}/>
+                                            }
+                                            label="Description"
+                                            labelPlacement="end"
+                                        />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <FormTextField placeholder="Start height" name={START_HEIGHT_FIELD} type="number" />
+                                        <FormControlLabel
+                                            control={
+                                                <FormTextField placeholder="" name={START_HEIGHT_FIELD} type="number" />
+                                            }
+                                            label="Start height"
+                                            labelPlacement="end"
+                                        />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <FormTextField placeholder="End height" name={END_HEIGHT_FIELD} type="number" />
+                                        <FormControlLabel
+                                            control={
+                                                <FormTextField placeholder="" name={END_HEIGHT_FIELD} type="number" />
+                                            }
+                                            label="End height"
+                                            labelPlacement="end"
+                                        />
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        <Button onClick={handleClose}>
+                                    
+                                    <Grid item xs={5}>
+                                        <Button type="reset" onClick={handleClose}>
                                             Cancel
                                         </Button>
+                                    </Grid>
+                                    <Grid item xs={5}>
                                         <Button type="submit" disabled={loading}>
-                                            Create poll
+                                            Create
                                         </Button>
                                     </Grid>
-
                                 </Grid>
                                 </div>
                         </Form>

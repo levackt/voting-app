@@ -1,12 +1,7 @@
 import * as React from "react";
 
-import { useError, useSdk, useAccount } from "../../service";
-import { useBaseStyles } from "../../theme";
+import { useError, useSdk } from "../../service";
 import { InitMsg, VotingDetails } from "./VotingDetails";
-import { Dashboard } from "./Dashboard";
-import { STAKE_AMOUNT_FIELD, StakeForm } from "./StakeForm";
-import { FormValues } from "../Form";
-import { Coin, coin } from "@cosmjs/sdk38";
 
 export interface ContractDetailsProps {
   readonly address: string;
@@ -30,32 +25,11 @@ type State = {
 };
 
 function ContractLogic({ address }: ContractDetailsProps): JSX.Element {
-  const classes = useBaseStyles();
-  const { account } = useAccount();
   const { getClient } = useSdk();
   const { setError } = useError();
   
 
   const [value, setValue,] = React.useState<State>(emptyInfo);
-
-  const doStake = async (values: FormValues): Promise<void> => {
-    // setState({ owner: address, loading: true });
-    
-    const payment = [coin(parseInt(values[STAKE_AMOUNT_FIELD]) || 0, value.initMsg.denom || "")];
-
-    try {
-      await getClient().execute(
-        value.address,
-        { stake_voting_tokens: { } },
-        "Staking",
-        payment,
-      );
-      //todo query users stake
-
-    } catch (err) {
-      setError(err);
-    }
-  };
 
   // get the contracts
   React.useEffect(() => {
@@ -82,16 +56,10 @@ function ContractLogic({ address }: ContractDetailsProps): JSX.Element {
   return (
     <div>
       {value.initMsg && value.initMsg.denom &&
-      <div>
-        
-        {/* <Dashboard contractAddress={address} denom={value.initMsg.denom || ""}/> */}
-        <VotingDetails contractAddress={address} owner={value.owner || ""} contract={value.initMsg} />
-        {/* <StakeForm handleStake={doStake} loading={false}/> */}
-        {/* <WithdrawForm handleWithdraw={doWithdraw} loading={state.loading} /> */}
-      </div>
-      
+        <div>
+          <VotingDetails contractAddress={address} owner={value.owner || ""} contract={value.initMsg} />
+        </div>
       }
-      
     </div>
   );
 }

@@ -1,6 +1,4 @@
 import React from 'react';
-import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
-import { useBaseStyles } from "../../theme";
 import { Poll } from "./VotingDetails";
 import IconButton from '@material-ui/core/IconButton';
 import SyncIcon from '@material-ui/icons/Sync';
@@ -12,33 +10,40 @@ export interface PollUpdateProps {
     readonly handleRefreshPoll: (poll: Poll) => void;
     readonly loading: boolean;
     readonly address: string;
+    readonly blockHeight: number;
 }
 
 export function PollUpdate(props: PollUpdateProps): JSX.Element {
-    const classes = useBaseStyles();
-    const { loading, address, poll, handleTallyPoll, handleRefreshPoll } = props;
+    const { loading, address, poll, handleTallyPoll, handleRefreshPoll, blockHeight } = props;
 
-    const canRefreshPoll = (poll: Poll) => {
-        return !loading && poll.creator !== address && 
-            poll.status === "InProgress";
-    };
-    const canTallyPoll = (poll: Poll) => {
-        return !loading && poll.creator === address && 
-            poll.status === "InProgress"
-        //todo check block height etc
+    // non-creator can refresh polls that are in progress
+    const canRefreshPoll = () => {
+        return !pollExpired() && !loading && !isPollCreator() && !pollEnded();
     };
 
+    // creator can tally polls that are in progress
+    const canTallyPoll = () => {
+         return pollExpired() && !loading && isPollCreator() && !pollEnded();
+    };
 
-    const pollEnded = (poll: Poll) : boolean => {
+    const pollExpired = () => {
+        if (!poll.endHeight || poll.endHeight < blockHeight) {
+            return true;
+        }
+        return false;
+    }
+
+    const pollEnded = () : boolean => {
         return poll.status !== "InProgress"
     }
-    const isPollCreator = (poll: Poll) : boolean => {
+
+    const isPollCreator = () : boolean => {
         return poll.creator === address;
     }
 
     return (
         <div>
-            { canTallyPoll(poll) &&
+            { canTallyPoll() &&
                 <IconButton
                     type="submit" onClick={(event) => handleTallyPoll(poll)}
                 >
@@ -46,14 +51,14 @@ export function PollUpdate(props: PollUpdateProps): JSX.Element {
                 </IconButton>
             }
 
-            { canRefreshPoll(poll) &&
+            { canRefreshPoll() &&
                 <IconButton
                     type="submit" onClick={(event) => handleRefreshPoll(poll)}
                 >
                     <SyncIcon/>
                 </IconButton>
             }
-            { pollEnded(poll) && poll.status }
+            { pollEnded() && poll.status }
         </div>
     );
 }
