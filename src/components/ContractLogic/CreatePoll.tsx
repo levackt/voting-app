@@ -11,7 +11,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Tooltip from "@material-ui/core/Tooltip";
 
 export const QUORUM_FIELD = "quorumField";
 export const DESCRIPTION_FIELD = "descriptionField";
@@ -37,7 +36,8 @@ export const CreatePoll: React.FC<CreatePollProps> = ({ handleCreatePoll, loadin
 
     return (
         <div>
-            <Button type="submit"  disabled={loading} onClick={handleClickOpen}>Create New Poll</Button>
+            <Button type="submit" disabled={loading} 
+                onClick={handleClickOpen}>Create New Poll</Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle className={classes.createPollTitle} id="form-dialog-title">Create New Poll</DialogTitle>
                 <DialogContent className={classes.createPollDialog}>

@@ -90,7 +90,11 @@ export function PollItem(props: PollItemProps): JSX.Element {
           const m = Math.floor(seconds % 3600 / 60);
           const s = Math.floor(seconds % 60);
 
-          return `${d} days ${h}h ${m}m ${s}s`;
+          if (d > 0) {
+            return `~${d} days ${h}h`;
+          } else {
+            return `${h}h ${m}m ${s}s`;
+          }
         } else {
           poll.status = "Expired"
         }
@@ -128,11 +132,11 @@ export function PollItem(props: PollItemProps): JSX.Element {
     <StyledTableRow key={poll.pollId}>
         <StyledTableCell>
             <IconButton disabled={!canCastVote()}
-            color="inherit" onClick={handleYesVote} aria-label="Yea">
+            color="primary" onClick={handleYesVote} aria-label="Yea">
                 <ThumbUpIcon/>
             </IconButton>
             <IconButton disabled={!canCastVote()}
-                color="inherit" onClick={handleNoVote} aria-label="Nay">
+                color="secondary" onClick={handleNoVote} aria-label="Nay">
                 <ThumbDownIcon/>
             </IconButton>
         </StyledTableCell>
@@ -145,7 +149,7 @@ export function PollItem(props: PollItemProps): JSX.Element {
         <StyledTableCell align="left" component="th" scope="row">
             {poll.description}
         </StyledTableCell>
-        <StyledTableCell align="right">{poll.quorum}</StyledTableCell>
+        <StyledTableCell align="right">{poll.quorum || 0}</StyledTableCell>
         <StyledTableCell align="right">{timeRemaining()}</StyledTableCell>
         <StyledTableCell align="right">
             <PollUpdate address={address} handleTallyPoll={handleTallyPoll} blockHeight={blockHeight}
