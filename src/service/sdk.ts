@@ -1,6 +1,13 @@
-import { SigningCallback, SigningCosmWasmClient } from "@cosmjs/cosmwasm";
-import { Bip39, Random } from "@cosmjs/crypto";
-import { encodeSecp256k1Pubkey, pubkeyToAddress, Secp256k1Pen, StdSignature } from "@cosmjs/sdk38";
+import {
+  encodeSecp256k1Pubkey,
+  pubkeyToAddress,
+  Secp256k1Pen,
+  SigningCallback,
+  SigningCosmWasmClient,
+} from "secretjs";
+import {FeeTable} from "secretjs/types/signingcosmwasmclient";
+import { StdSignature } from "secretjs/types/types";
+import { Bip39, Random } from "@iov/crypto";
 
 // generateMnemonic will give you a fresh mnemonic
 // it is up to the app to store this somewhere
@@ -32,20 +39,34 @@ export interface Wallet {
 
 export async function burnerWallet(): Promise<Wallet> {
   const mnemonic = loadOrCreateMnemonic();
-  return signer(mnemonic)
-}
-
-export async function signer(mnemonic: string): Promise<Wallet> {
   const pen = await Secp256k1Pen.fromMnemonic(mnemonic);
   const pubkey = encodeSecp256k1Pubkey(pen.pubkey);
-  const address = pubkeyToAddress(pubkey, "cosmos");
+  const address = pubkeyToAddress(pubkey, "secret");
   const signer = (signBytes: Uint8Array): Promise<StdSignature> => pen.sign(signBytes);
   return { address, signer };
 }
 
+const buildFeeTable = (feeToken: string, gasPrice: number): FeeTable => {
+  const stdFee = (gas: number, denom: string, price: number) => {
+    const amount = Math.floor(gas * price);
+    return {
+      amount: [{ amount: amount.toString(), denom: denom }],
+      gas: gas.toString(),
+    }
+  };
+
+  return {
+    upload: stdFee(1000000, feeToken, gasPrice),
+    init: stdFee(500000, feeToken, gasPrice),
+    exec: stdFee(200000, feeToken, gasPrice),
+    send: stdFee(80000, feeToken, gasPrice),
+  }
+};
+
 // this creates a new connection to a server at URL,
 // using a signing keyring generated from the given mnemonic
 export async function connect(httpUrl: string, { address, signer }: Wallet): Promise<ConnectResult> {
-  const client = new SigningCosmWasmClient(httpUrl, address, signer);
+  const client = new SigningCosmWasmClient(httpUrl, address, signer, 
+    undefined, buildFeeTable("uscrt", 1));
   return { address, client };
 }

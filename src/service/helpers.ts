@@ -1,22 +1,21 @@
-import { Coin, coin } from "@cosmjs/sdk38";
-import { Decimal } from "@cosmjs/math";
-import { logs } from "@cosmjs/cosmwasm";
+import { types } from "secretjs";
+import { Decimal } from "@iov/encoding";
 
 // NARROW NO-BREAK SPACE (U+202F)
 const thinSpace = "\u202F";
 
-export function printableBalanceOf(denom: string, balance?: readonly Coin[]): string {
+export function printableBalanceOf(denom: string, balance?: readonly types.Coin[]): string {
   if (!balance || balance.length === 0) return "–";
   const coin = balance.filter(coin => coin.denom === denom).map(printableCoin);
   return coin.length > 0 ? coin[0] : "";
 }
 
-export function printableBalance(balance?: readonly Coin[]): string {
+export function printableBalance(balance?: readonly types.Coin[]): string {
   if (!balance || balance.length === 0) return "–";
   return balance.map(printableCoin).join(", ");
 }
 
-export function printableCoin(coin?: Coin): string {
+export function printableCoin(coin?: types.Coin): string {
   if (!coin) {
     return "0";
   }

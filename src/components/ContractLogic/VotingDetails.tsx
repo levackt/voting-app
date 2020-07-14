@@ -15,11 +15,6 @@ import { Loading } from "./Loading";
 import Box from '@material-ui/core/Box';
 import { PollList } from "./PollList";
 
-export interface InitMsg {
-  readonly denom?: string;
-  readonly name?: string;
-}
-
 export interface CreatePollMsg {
   readonly quorum_percentage: number;
   readonly description: string;
@@ -29,7 +24,7 @@ export interface CreatePollMsg {
 
 export interface VotingDetailsProps {
   readonly contractAddress: string;
-  readonly contract: InitMsg;
+  readonly denom: string;
   readonly owner: string;
 }
 
@@ -64,7 +59,7 @@ export interface Poll {
 
 export function VotingDetails(props: VotingDetailsProps): JSX.Element {
   const classes = useBaseStyles();
-  const { contractAddress, contract } = props;
+  const { contractAddress, denom } = props;
   const { address, getClient } = useSdk();
   const { setError } = useError();
   const { refreshAccount } = useAccount();
@@ -77,7 +72,7 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
 
     setState({ ...state, loading: true });
     
-    const payment = [coin(parseInt(values[STAKE_AMOUNT_FIELD]) || 0, contract.denom || "")];
+    const payment = [coin(parseInt(values[STAKE_AMOUNT_FIELD]) || 0, denom || "")];
 
     try {
       await getClient().execute(
@@ -217,7 +212,7 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
         setState({ ...state, loading: false });
         setError(err);
       });
-  }, []);
+  }, [contractAddress]);
 
 
   /**
@@ -341,8 +336,8 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
 
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            {contract.denom && 
-              <Dashboard denom={contract.denom} 
+            {denom && 
+              <Dashboard denom={denom} 
                 stakedBalance={state.stakedBalance} 
                 tokenBalance={state.tokenBalance}
                 />

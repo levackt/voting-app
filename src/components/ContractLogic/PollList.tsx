@@ -44,7 +44,7 @@ export function PollList(props: PollListProps): JSX.Element {
   useEffect(() => {
     const interval = setInterval(() => {
       refreshBlockHeight();
-    }, 1000);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 

@@ -22,10 +22,10 @@ export function Dashboard(props: DashboardProps): JSX.Element {
 
       <Grid container spacing={10} justify="space-between">
         <Grid item xs={6}>
-          <FormLabel>Staked Tokens: {stakedBalance && printableAmount(denom, String(stakedBalance))}</FormLabel>
+          <FormLabel>Staked Tokens: {stakedBalance && printableAmount(denom, String(stakedBalance | 0))}</FormLabel>
         </Grid>
         <Grid item xs={6}>
-          <FormLabel>Token Balance: {tokenBalance && printableBalanceOf(denom, coins(tokenBalance, denom))}</FormLabel>
+          <FormLabel>Token Balance: {tokenBalance && printableBalanceOf(denom, coins(tokenBalance | 0, denom))}</FormLabel>
         </Grid>
       </Grid>
     </div>

@@ -1,4 +1,4 @@
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm";
+import { SigningCosmWasmClient } from "secretjs";
 import ky from "ky";
 import * as React from "react";
 import { useEffect, useState } from "react";
@@ -57,10 +57,14 @@ export function SdkProvider(props: SdkProviderProps): JSX.Element {
       .then(async ({ address, client }) => {
         // load from faucet if needed
         if (config.faucetUrl) {
-          const acct = await client.getAccount();
-          if (!acct?.balance?.length) {
-            await ky.post(config.faucetUrl, { json: { ticker: "COSM", address } });
-          }
+          try {
+            const acct = await client.getAccount();
+            if (!acct?.balance?.length) {
+              await ky.post(config.faucetUrl, { json: { ticker: "SCRT", address } });
+            }
+          } catch(error) {
+            console.error(error)
+          }          
         }
 
         setValue({

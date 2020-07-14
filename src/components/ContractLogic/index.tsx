@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { useError, useSdk } from "../../service";
-import { InitMsg, VotingDetails } from "./VotingDetails";
+import { VotingDetails } from "./VotingDetails";
 
 export interface ContractDetailsProps {
   readonly address: string;
@@ -13,7 +13,7 @@ const emptyInfo: State = {
   owner: "",
   stakedTokens: 0,
   pollCount: 0,
-  initMsg: {denom: "", name: ""},
+  denom: "",
 };
 
 type State = { 
@@ -21,7 +21,7 @@ type State = {
   readonly owner?: string,
   readonly stakedTokens?: number,
   readonly pollCount?: number,
-  readonly initMsg: InitMsg,
+  denom?: "",
 };
 
 function ContractLogic({ address }: ContractDetailsProps): JSX.Element {
@@ -45,7 +45,7 @@ function ContractLogic({ address }: ContractDetailsProps): JSX.Element {
               address: address,
               stakedTokens: res.staked_tokens,
               pollCount: res.poll_count,
-              initMsg: info.initMsg,
+              denom: res.denom,
               })
           });
         }
@@ -55,9 +55,9 @@ function ContractLogic({ address }: ContractDetailsProps): JSX.Element {
 
   return (
     <div>
-      {value.initMsg && value.initMsg.denom &&
+      {value.denom &&
         <div>
-          <VotingDetails contractAddress={address} owner={value.owner || ""} contract={value.initMsg} />
+          <VotingDetails contractAddress={address} owner={value.owner || ""} denom={value.denom} />
         </div>
       }
     </div>

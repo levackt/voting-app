@@ -8,9 +8,7 @@
   ],
   "homepage": "https://github.com/enigmampc/voting-app/",
   "dependencies": {
-    "@cosmjs/cosmwasm": "^0.20.0",
-    "@cosmjs/crypto": "^0.20.0",
-    "@cosmjs/math": "^0.20.0",
+    "secretjs": "0.9.10",
     "@cosmjs/sdk38": "^0.20.0",
     "@date-io/core": "^2.4.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.27",
@@ -76,7 +74,6 @@
     ]
   },
   "devDependencies": {
-    "@cosmjs/cli": "^0.21.0",
     "@types/react-redux": "^7.1.7",
     "@types/react-router": "^5.1.4",
     "@types/react-router-dom": "^5.1.3",

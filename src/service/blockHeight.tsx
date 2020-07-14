@@ -32,7 +32,7 @@ export function BlockHeightProvider(props: { readonly children: any }): JSX.Elem
   useEffect(() => {
     const interval = setInterval(() => {
       refreshBlockHeight();
-    }, 1000);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
