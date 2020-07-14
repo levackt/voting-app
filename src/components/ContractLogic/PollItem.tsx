@@ -96,7 +96,7 @@ export function PollItem(props: PollItemProps): JSX.Element {
             return `${h}h ${m}m ${s}s`;
           }
         } else {
-          poll.status = "Expired"
+          return "";
         }
       }
   }

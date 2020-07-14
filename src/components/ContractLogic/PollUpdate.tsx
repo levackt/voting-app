@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Poll } from "./VotingDetails";
 import IconButton from '@material-ui/core/IconButton';
-import SyncIcon from '@material-ui/icons/Sync';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 
 export interface PollUpdateProps {
@@ -16,14 +15,16 @@ export interface PollUpdateProps {
 export function PollUpdate(props: PollUpdateProps): JSX.Element {
     const { loading, address, poll, handleTallyPoll, handleRefreshPoll, blockHeight } = props;
 
-    // non-creator can refresh polls that are in progress
-    const canRefreshPoll = () => {
-        return !pollExpired() && !loading && !isPollCreator() && !pollEnded();
-    };
+    useEffect(() => {
+        const interval = setInterval(() => {
+            handleRefreshPoll(poll)
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
 
     // creator can tally polls that are in progress
     const canTallyPoll = () => {
-         return pollExpired() && !loading && isPollCreator() && !pollEnded();
+         return pollExpired() && !loading && isPollCreator() && pollInProgress();
     };
 
     const pollExpired = () => {
@@ -33,8 +34,8 @@ export function PollUpdate(props: PollUpdateProps): JSX.Element {
         return false;
     }
 
-    const pollEnded = () : boolean => {
-        return poll.status !== "InProgress"
+    const pollInProgress = () : boolean => {
+        return poll.status === "InProgress"
     }
 
     const isPollCreator = () : boolean => {
@@ -43,22 +44,16 @@ export function PollUpdate(props: PollUpdateProps): JSX.Element {
 
     return (
         <div>
-            { canTallyPoll() &&
+            { canTallyPoll() && pollInProgress() &&
                 <IconButton
-                    type="submit" onClick={(event) => handleTallyPoll(poll)}
+                    type="submit" disabled={!canTallyPoll()}
+                    onClick={(event) => handleTallyPoll(poll)}
                 >
                     <AssignmentTurnedInIcon/>
                 </IconButton>
             }
-
-            { canRefreshPoll() &&
-                <IconButton
-                    type="submit" onClick={(event) => handleRefreshPoll(poll)}
-                >
-                    <SyncIcon/>
-                </IconButton>
-            }
-            { pollEnded() && poll.status }
+            { !pollInProgress() && !isPollCreator() && poll.status }
+            { !canTallyPoll() && isPollCreator() && poll.status }
         </div>
     );
 }

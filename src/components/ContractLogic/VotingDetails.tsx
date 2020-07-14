@@ -73,28 +73,6 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
 
   const [state, setState] = React.useState<State>({ loading: false });
 
-
-  React.useEffect(() => {
-    setState({ loading: true});
-    
-    getClient()
-      /* eslint-disable-next-line @typescript-eslint/camelcase */
-      .queryContractSmart(contractAddress, { token_stake: { address } })
-      .then(res => {
-          return res
-      }).then((stake) => {
-        getClient()
-          .queryContractSmart(contractAddress, { config: { } })
-          .then(res => {
-            loadPolls(res.poll_count, res.staked_tokens, stake.token_balance);
-          })
-      })
-      .catch(err => {
-        setState({ ...state, loading: false });
-        setError(err);
-      });
-  }, [getClient, setError, contractAddress]);
-
   const doStake = async (values: FormValues): Promise<void> => {
 
     setState({ ...state, loading: true });
@@ -191,27 +169,6 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
     }
   }
 
-  /**
-   * Refresh the user's token balance on the current contract
-   */
-  const refreshTokenBalance = async (): Promise<void> => {
-    
-    await getClient()
-      /* eslint-disable-next-line @typescript-eslint/camelcase */
-      .queryContractSmart(contractAddress, { token_stake: { address } })
-      .then(config => {
-        getClient()
-          .queryContractSmart(contractAddress, { config: { } })
-          .then(res => {
-            loadPolls(res.poll_count, res.staked_tokens, config.token_balance);
-          })
-      })
-      .catch(err => {
-        setState({ ...state, loading: false });
-        setError(err);
-      });
-  };
-
   const loadPolls = async (pollCount: number, stakedBalance: number, tokenBalance: number): Promise<void> => {
     let polls: Map<number, Poll> = new Map();
 
@@ -239,7 +196,49 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
           });
     }
     setState({...state, polls: polls, loading: false, stakedBalance, tokenBalance, pollCount});
+  };
+
+  React.useEffect(() => {
+    setState({ loading: true});
     
+    getClient()
+      /* eslint-disable-next-line @typescript-eslint/camelcase */
+      .queryContractSmart(contractAddress, { token_stake: { address } })
+      .then(res => {
+          return res
+      }).then((stake) => {
+        getClient()
+          .queryContractSmart(contractAddress, { config: { } })
+          .then(res => {
+            loadPolls(res.poll_count, res.staked_tokens, stake.token_balance);
+          })
+      })
+      .catch(err => {
+        setState({ ...state, loading: false });
+        setError(err);
+      });
+  }, []);
+
+
+  /**
+   * Refresh the user's token balance on the current contract
+   */
+  const refreshTokenBalance = async (): Promise<void> => {
+    
+    await getClient()
+      /* eslint-disable-next-line @typescript-eslint/camelcase */
+      .queryContractSmart(contractAddress, { token_stake: { address } })
+      .then(config => {
+        getClient()
+          .queryContractSmart(contractAddress, { config: { } })
+          .then(res => {
+            loadPolls(res.poll_count, res.staked_tokens, config.token_balance);
+          })
+      })
+      .catch(err => {
+        setState({ ...state, loading: false });
+        setError(err);
+      });
   };
 
   const doRefreshPoll = async (poll: Poll) : Promise<void> => {
