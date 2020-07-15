@@ -34,7 +34,6 @@ export function printableAmount(denom: string, amount: string): string {
   }
 }
 
-// export function getAttribute (logs: readonly logs.Log[], key: string): string|undefined {
-//   const key = logs[0].events[1].attributes.find(x => x.key === key);
-//   return logs[0].events[0].attributes.find(x => x.key === key)?.value
-// }
+export function toUscrt(amount: string): string {
+  return Math.floor(parseFloat(amount) * 10**6).toString()
+}

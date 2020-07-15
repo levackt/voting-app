@@ -2,12 +2,12 @@ import * as Yup from "yup";
 
 export const WithdrawValidationSchema = Yup.object().shape({
   withdrawAmountField: Yup.number()
-    .min(1, "Invalid withdraw amount"),
+    .min(0.000001, "Invalid withdraw amount"),
 });
 
 export const StakeValidationSchema = Yup.object().shape({
   stakeAmountField: Yup.number()
-    .min(1, "Invalid stake amount"),
+    .min(0.000001, "Invalid stake amount"),
 });
 
 export const CreatePollValidationSchema = Yup.object().shape({

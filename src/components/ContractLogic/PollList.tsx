@@ -59,6 +59,7 @@ export function PollList(props: PollListProps): JSX.Element {
                 <StyledTableCell align="left">Description</StyledTableCell>
                 <StyledTableCell align="right">Quorum</StyledTableCell>
                 <StyledTableCell align="right">Time remaining</StyledTableCell>
+                <StyledTableCell align="right">Status</StyledTableCell>
                 <StyledTableCell align="right"></StyledTableCell>
             </TableRow>
             </TableHead>

@@ -8,7 +8,6 @@
   ],
   "homepage": "https://github.com/enigmampc/voting-app/",
   "dependencies": {
-    "secretjs": "0.9.10",
     "@cosmjs/sdk38": "^0.20.0",
     "@date-io/core": "^2.4.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.27",
@@ -44,6 +43,7 @@
     "redux-promise-middleware": "^6.1.2",
     "redux-promise-middleware-actions": "^3.0.1",
     "redux-thunk": "^2.3.0",
+    "secretjs": "0.9.10",
     "typescript": "~3.7.2",
     "yup": "^0.28.1"
   },

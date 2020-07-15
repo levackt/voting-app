@@ -308,7 +308,7 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
             const description = res.description;
             const polls: Map<number, Poll> = state.polls || new Map();
             polls.set(pollId, createPollData(
-                pollId, creator, description, quorum, status, start, end
+                pollId, creator, description, quorum, status, res.start_height, res.end_height
               )
             );
             setState({ ...state, polls: polls });

@@ -44,16 +44,15 @@ export function PollUpdate(props: PollUpdateProps): JSX.Element {
 
     return (
         <div>
-            { canTallyPoll() && pollInProgress() &&
+            { pollInProgress() &&
                 <IconButton
                     type="submit" disabled={!canTallyPoll()}
                     onClick={(event) => handleTallyPoll(poll)}
-                >
-                    <AssignmentTurnedInIcon/>
+                > 
+                    <AssignmentTurnedInIcon/> Tally
                 </IconButton>
             }
-            { !pollInProgress() && !isPollCreator() && poll.status }
-            { !canTallyPoll() && isPollCreator() && poll.status }
+            { !pollInProgress() && poll.status }
         </div>
     );
 }

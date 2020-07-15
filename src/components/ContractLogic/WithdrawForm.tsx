@@ -1,5 +1,6 @@
 import { Form, Formik } from "formik";
 import * as React from "react";
+import { toUscrt } from "../../service/helpers";
 
 import { Button } from "../../theme";
 import { useBaseStyles } from "../../theme";
@@ -25,6 +26,7 @@ export const WithdrawForm: React.FC<WithdrawFormProps> = ({ handleWithdraw, stak
       validationSchema={WithdrawValidationSchema}
       onSubmit={async ({ withdrawAmountField }, { setSubmitting }) => {
         // todo validate, staked >= withdraw amount etc etc
+        withdrawAmountField = toUscrt(withdrawAmountField);
         setSubmitting(true);
         handleWithdraw({ withdrawAmountField });
       }}

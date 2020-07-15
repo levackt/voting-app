@@ -10,6 +10,7 @@ import ThumbDownIcon from "@material-ui/icons/ThumbDown";
 import { Poll } from "./VotingDetails";
 import { TextField } from "@material-ui/core";
 import { PollUpdate } from "./PollUpdate";
+import { toUscrt } from "../../service/helpers";
 
 export const WEIGHT_FIELD = "weightField";
 
@@ -101,6 +102,15 @@ export function PollItem(props: PollItemProps): JSX.Element {
       }
   }
 
+  const getQuorum = () => {
+    // todo include current quorum status, maybe as a progress bar and 5% / 20%
+    if (!poll.quorum) {
+      return "none";
+    } else {
+      return `${poll.quorum}%`;
+    }
+  }
+
   const validWeight = () => {
     if (!stakedBalance || !state.pollWeight) {
       return false;
@@ -121,7 +131,7 @@ export function PollItem(props: PollItemProps): JSX.Element {
   const handleWeightChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) : void => {
       event.preventDefault();
-      const weight = event.target.value;
+      const weight = toUscrt(event.target.value);
       
       if (weight && parseInt(weight) > 0 && parseInt(weight) <= stakedBalance) {
         setState({pollWeight: parseInt(weight)});
@@ -149,8 +159,10 @@ export function PollItem(props: PollItemProps): JSX.Element {
         <StyledTableCell align="left" component="th" scope="row">
             {poll.description}
         </StyledTableCell>
-        <StyledTableCell align="right">{poll.quorum || 0}</StyledTableCell>
+        <StyledTableCell align="right">{getQuorum()}
+          </StyledTableCell>
         <StyledTableCell align="right">{timeRemaining()}</StyledTableCell>
+        <StyledTableCell align="right">{poll.status}</StyledTableCell>
         <StyledTableCell align="right">
             <PollUpdate address={address} handleTallyPoll={handleTallyPoll} blockHeight={blockHeight}
             loading={loading} handleRefreshPoll={handleRefreshPoll} poll={poll}

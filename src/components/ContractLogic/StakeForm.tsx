@@ -1,5 +1,6 @@
 import { Form, Formik } from "formik";
 import * as React from "react";
+import { toUscrt } from "../../service/helpers";
 
 import { Button } from "../../theme";
 import { useBaseStyles } from "../../theme";
@@ -24,9 +25,13 @@ export const StakeForm: React.FC<StakeFormProps> = ({ handleStake, tokenBalance 
       }}
       validationSchema={StakeValidationSchema}
       onSubmit={async ({ stakeAmountField }, { setSubmitting }) => {
-        // todo validate, balance >= stake etc
-        setSubmitting(true);
-        handleStake({ stakeAmountField });
+        try {
+          stakeAmountField = toUscrt(stakeAmountField);
+          setSubmitting(true);
+          handleStake({ stakeAmountField });
+        } catch (ex) {
+          console.error(ex);
+        }
       }}
     >
       {({ handleSubmit }) => (
