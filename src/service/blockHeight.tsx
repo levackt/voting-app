@@ -1,5 +1,4 @@
-import { Account } from "@cosmjs/sdk38";
-import React, { useState, useEffect } from 'react';
+import * as React from "react";
 
 import { useError } from "./error";
 import { useSdk } from "./wallet";
@@ -8,50 +7,43 @@ interface State {
   readonly blockHeight?: number;
 }
 
-export interface BlockHeightContextType extends State {
+interface BlockHeightContextType extends State {
   readonly refreshBlockHeight: () => void;
 }
 
-function dummyRefresh(): void {}
-
-const defaultContext = (): BlockHeightContextType => {
-  return {
-    refreshBlockHeight: dummyRefresh,
-  };
+const defaultContext: BlockHeightContextType = {
+  refreshBlockHeight: () => {
+    return;
+  },
 };
 
-export const BlockHeightContext = React.createContext<BlockHeightContextType>(defaultContext());
+const BlockHeightContext = React.createContext<BlockHeightContextType>(defaultContext);
 
 export const useBlockHeight = (): BlockHeightContextType => React.useContext(BlockHeightContext);
 
-export function BlockHeightProvider(props: { readonly children: any }): JSX.Element {
-  const [value, setValue] = React.useState<State>({});
-  const { loading, getClient } = useSdk();
+export function BlockHeightProvider({ children }: React.HTMLAttributes<HTMLOrSVGElement>): JSX.Element {
   const { setError } = useError();
+  const sdk = useSdk();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      refreshBlockHeight();
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const [value, setValue] = React.useState<State>({});
 
-  const refreshBlockHeight = (): void => {
-    if (!loading) {
-      getClient()
+  function refreshBlockHeight(): void {
+    if (sdk.initialized) {
+      sdk
+        .getClient()
         .getHeight()
         .then(blockHeight => setValue({ blockHeight }))
         .catch(setError);
     }
-  };
+  }
 
   // this should just be called once on startup
-  React.useEffect(refreshBlockHeight, [loading, getClient, setError]);
+  React.useEffect(refreshBlockHeight, [sdk, setError]);
 
   const context: BlockHeightContextType = {
-    refreshBlockHeight,
+    refreshBlockHeight: refreshBlockHeight,
     blockHeight: value.blockHeight,
   };
 
-  return <BlockHeightContext.Provider value={context}>{props.children}</BlockHeightContext.Provider>;
+  return <BlockHeightContext.Provider value={context}>{children}</BlockHeightContext.Provider>;
 }

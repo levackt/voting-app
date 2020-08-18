@@ -1,78 +1,76 @@
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm";
-import ky from "ky";
+import { OfflineSigner } from "@cosmjs/launchpad";
 import * as React from "react";
 import { useEffect, useState } from "react";
 
 import { AppConfig } from "../config";
-import { useError } from "./error";
-import { burnerWallet, connect, Wallet } from "./sdk";
+import { createClient, loadOrCreateWallet } from "./sdk";
 
-export interface CosmWasmContextType {
-  readonly loading: boolean;
+interface CosmWasmContextType {
+  readonly initialized: boolean;
   readonly address: string;
   readonly getClient: () => SigningCosmWasmClient;
 }
 
 const defaultContext: CosmWasmContextType = {
-  loading: true,
+  initialized: false,
   address: "",
   getClient: (): SigningCosmWasmClient => {
     throw new Error("not yet initialized");
   },
 };
 
-export const CosmWasmContext = React.createContext<CosmWasmContextType>(defaultContext);
+const CosmWasmContext = React.createContext<CosmWasmContextType>(defaultContext);
 
 export const useSdk = (): CosmWasmContextType => React.useContext(CosmWasmContext);
 
-export interface WalletProviderProps {
-  config: AppConfig;
-  children: any;
+interface ConfigProp {
+  readonly config: AppConfig;
 }
 
-export interface SdkProviderProps {
-  config: AppConfig;
-  loadWallet: () => Promise<Wallet>;
-  children: any;
-}
+type BurnerWalletProviderProps = ConfigProp & React.HTMLAttributes<HTMLOrSVGElement>;
 
-export function BurnerWalletProvider(props: WalletProviderProps): JSX.Element {
+export function BurnerWalletProvider({ config, children }: BurnerWalletProviderProps): JSX.Element {
   return (
-    <SdkProvider config={props.config} loadWallet={burnerWallet}>
-      {props.children}
+    <SdkProvider config={config} loadWallet={loadOrCreateWallet}>
+      {children}
     </SdkProvider>
   );
 }
 
-export function SdkProvider(props: SdkProviderProps): JSX.Element {
+interface ConfigWalletProps extends ConfigProp {
+  readonly loadWallet: (addressPrefix: string) => Promise<OfflineSigner>;
+}
+
+type SdkProviderProps = ConfigWalletProps & React.HTMLAttributes<HTMLOrSVGElement>;
+
+export function SdkProvider({ config, loadWallet, children }: SdkProviderProps): JSX.Element {
   const [value, setValue] = useState(defaultContext);
-  const { setError } = useError();
 
-  const { config, loadWallet } = props;
-
-  // just call this once on startup
   useEffect(() => {
-    loadWallet()
-      .then(wallet => connect(config.httpUrl, wallet))
-      .then(async ({ address, client }) => {
+    loadWallet(config.addressPrefix)
+      .then(signer => createClient(config.httpUrl, signer))
+      .then(async client => {
+        const address = client.senderAddress;
         // load from faucet if needed
         if (config.faucetUrl) {
           const acct = await client.getAccount();
           if (!acct?.balance?.length) {
-            await ky.post(config.faucetUrl, { json: { ticker: "COSM", address } });
+            await fetch(config.faucetUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ ticker: config.faucetToken, address }),
+            });
           }
         }
 
         setValue({
-          loading: false,
+          initialized: true,
           address: address,
           getClient: () => client,
         });
-      })
-      .catch(setError);
+      });
+  }, [config.addressPrefix, config.faucetToken, config.faucetUrl, config.httpUrl, loadWallet]);
 
-    // TODO: return a clean-up function???
-  }, [config.httpUrl, config.faucetUrl, loadWallet, setError]);
-
-  return <CosmWasmContext.Provider value={value}>{props.children}</CosmWasmContext.Provider>;
+  return <CosmWasmContext.Provider value={value}>{children}</CosmWasmContext.Provider>;
 }
