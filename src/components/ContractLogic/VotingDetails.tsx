@@ -77,7 +77,8 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
 
     setState({ ...state, loading: true });
     
-    const payment = [coin(parseInt(values[STAKE_AMOUNT_FIELD]) || 0, contract.denom || "")];
+    const stakeMicroAmount = parseFloat(values[STAKE_AMOUNT_FIELD]) * 1_000_000;
+    const payment = [coin(stakeMicroAmount || 0, contract.denom || "")];
 
     try {
       await getClient().execute(
@@ -97,7 +98,9 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
   };
 
   const doWithdraw = async (values: FormValues): Promise<void> => {
-    const amount = values[WITHDRAW_AMOUNT_FIELD] || "0";
+    const withdrawMicroAmount = parseFloat(values[WITHDRAW_AMOUNT_FIELD]) * 1_000_000;
+    const amount = String(withdrawMicroAmount) || "0";
+
     setState({ ...state, loading: true });
 
     let withdrawMsg = { withdraw_voting_tokens: { } }
