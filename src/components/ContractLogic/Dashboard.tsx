@@ -1,5 +1,5 @@
 import * as React from "react";
-import { coins } from "@cosmjs/sdk38";
+import { coins } from "@cosmjs/launchpad";
 import MuiTypography from "@material-ui/core/Typography";
 import FormLabel from '@material-ui/core/FormLabel';
 import Grid from '@material-ui/core/Grid';

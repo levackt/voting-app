@@ -1,4 +1,4 @@
-import { coin } from "@cosmjs/sdk38";
+import { coin } from "@cosmjs/launchpad";
 import MuiTypography from "@material-ui/core/Typography";
 import * as React from "react";
 import { STAKE_AMOUNT_FIELD, StakeForm } from "./StakeForm";
