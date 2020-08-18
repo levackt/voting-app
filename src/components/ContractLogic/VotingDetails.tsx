@@ -38,7 +38,7 @@ export interface State {
   readonly loading: boolean;
   readonly pollCount?: number;
   readonly stakedBalance?: number;
-  readonly tokenBalance?: number;
+  readonly tokenBalance?: string;
   readonly polls?: Map<number, Poll>;
 }
 
@@ -169,7 +169,7 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
     }
   }
 
-  const loadPolls = async (pollCount: number, stakedBalance: number, tokenBalance: number): Promise<void> => {
+  const loadPolls = async (pollCount: number, stakedBalance: number, tokenBalance: string): Promise<void> => {
     let polls: Map<number, Poll> = new Map();
 
     setState({ ...state, loading: true });

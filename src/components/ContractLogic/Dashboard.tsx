@@ -7,7 +7,7 @@ import { printableBalanceOf, printableAmount } from "../../service/helpers";
 
 export interface DashboardProps {
   readonly denom: string;
-  readonly tokenBalance?: number;
+  readonly tokenBalance?: string;
   readonly stakedBalance?: number;
 }
 
@@ -25,7 +25,7 @@ export function Dashboard(props: DashboardProps): JSX.Element {
           <FormLabel>Staked Tokens: {stakedBalance && printableAmount(denom, String(stakedBalance))}</FormLabel>
         </Grid>
         <Grid item xs={6}>
-          <FormLabel>Token Balance: {tokenBalance && printableBalanceOf(denom, coins(tokenBalance, denom))}</FormLabel>
+          <FormLabel>Token Balance: {tokenBalance && printableBalanceOf(denom, coins(parseInt(tokenBalance, 10), denom))}</FormLabel>
         </Grid>
       </Grid>
     </div>
