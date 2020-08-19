@@ -10,7 +10,7 @@ import { StakeValidationSchema } from "../Form/validationSchema";
 export const STAKE_AMOUNT_FIELD = "stakeAmountField";
 
 interface StakeFormProps {
-  readonly tokenBalance?: number;
+  readonly tokenBalance?: string;
   readonly handleStake: (values: FormValues) => void;
 }
 

@@ -1,4 +1,4 @@
-import { coin } from "@cosmjs/sdk38";
+import { coin } from "@cosmjs/launchpad";
 import MuiTypography from "@material-ui/core/Typography";
 import * as React from "react";
 import { STAKE_AMOUNT_FIELD, StakeForm } from "./StakeForm";
@@ -38,7 +38,7 @@ export interface State {
   readonly loading: boolean;
   readonly pollCount?: number;
   readonly stakedBalance?: number;
-  readonly tokenBalance?: number;
+  readonly tokenBalance?: string;
   readonly polls?: Map<number, Poll>;
 }
 
@@ -77,7 +77,8 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
 
     setState({ ...state, loading: true });
     
-    const payment = [coin(parseInt(values[STAKE_AMOUNT_FIELD]) || 0, contract.denom || "")];
+    const stakeMicroAmount = parseFloat(values[STAKE_AMOUNT_FIELD]) * 1_000_000;
+    const payment = [coin(stakeMicroAmount || 0, contract.denom || "")];
 
     try {
       await getClient().execute(
@@ -97,7 +98,9 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
   };
 
   const doWithdraw = async (values: FormValues): Promise<void> => {
-    const amount = values[WITHDRAW_AMOUNT_FIELD] || "0";
+    const withdrawMicroAmount = parseFloat(values[WITHDRAW_AMOUNT_FIELD]) * 1_000_000;
+    const amount = String(withdrawMicroAmount) || "0";
+
     setState({ ...state, loading: true });
 
     let withdrawMsg = { withdraw_voting_tokens: { } }
@@ -122,7 +125,7 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
   };
 
   const doCastVote = async (vote: string, poll: Poll, weight: number): Promise<void> => {
-    let castVoteMsg = { cast_vote: { weight: String(weight), encrypted_vote: vote, poll_id: poll.pollId } }
+    let castVoteMsg = { cast_vote: { weight: String(weight), vote: vote, poll_id: poll.pollId } }
     setState({ ...state, loading: true });
     try {
       await getClient().execute(
@@ -169,7 +172,7 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
     }
   }
 
-  const loadPolls = async (pollCount: number, stakedBalance: number, tokenBalance: number): Promise<void> => {
+  const loadPolls = async (pollCount: number, stakedBalance: number, tokenBalance: string): Promise<void> => {
     let polls: Map<number, Poll> = new Map();
 
     setState({ ...state, loading: true });
