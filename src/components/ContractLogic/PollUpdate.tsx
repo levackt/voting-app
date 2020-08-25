@@ -52,7 +52,6 @@ export function PollUpdate(props: PollUpdateProps): JSX.Element {
                     <AssignmentTurnedInIcon/> Tally
                 </IconButton>
             }
-            { !pollInProgress() && poll.status }
         </div>
     );
 }

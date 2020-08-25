@@ -84,7 +84,7 @@ export function PollItem(props: PollItemProps): JSX.Element {
         const blocksRemaining = poll.endHeight - blockHeight;
 
         if (blocksRemaining > 0) {
-          const blockTime = 1; // todo block time
+          const blockTime = 6; // todo block time
           const seconds = blocksRemaining * blockTime;
           const d = Math.floor(seconds / (3600*24));
           const h = Math.floor(seconds % (3600*24) / 3600);

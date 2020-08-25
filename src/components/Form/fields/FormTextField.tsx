@@ -7,11 +7,13 @@ interface TextFieldProps {
   type: string;
   placeholder?: string;
   InputProps?: any;
+  disabled?: boolean;
 }
 
 export const FormTextField: React.FC<TextFieldProps & FieldAttributes<{}>> = ({
   type,
   placeholder,
+  disabled,
   InputProps,
   ...props
 }: TextFieldProps) => {
@@ -28,6 +30,7 @@ export const FormTextField: React.FC<TextFieldProps & FieldAttributes<{}>> = ({
         {...field}
         helperText={errorText}
         error={!!errorText}
+        disabled={disabled}
       />
     );
   }

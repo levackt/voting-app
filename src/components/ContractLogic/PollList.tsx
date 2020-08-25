@@ -51,7 +51,7 @@ export function PollList(props: PollListProps): JSX.Element {
   return (
       <div>
         <TableContainer component={Paper}>
-        <Table className={classes.table} aria-label="List of polls">
+        <Table className={classes.table} size="small" aria-label="List of polls">
             <TableHead>
             <TableRow>
                 <StyledTableCell>Vote</StyledTableCell>

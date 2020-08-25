@@ -117,7 +117,8 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
   };
 
   const doCastVote = async (vote: string, poll: Poll, weight: number): Promise<void> => {
-    let castVoteMsg = { cast_vote: { weight: String(weight), encrypted_vote: vote, poll_id: poll.pollId } }
+    let castVoteMsg = { cast_vote: { weight: String(weight), vote: vote, poll_id: poll.pollId } }
+    
     setState({ ...state, loading: true });
     try {
       await getClient().execute(
@@ -168,7 +169,7 @@ export function VotingDetails(props: VotingDetailsProps): JSX.Element {
     let polls: Map<number, Poll> = new Map();
 
     setState({ ...state, loading: true });
-    
+
     var i: number;
     for (i = pollCount; i > 0; i--) {
         let pollId = i;

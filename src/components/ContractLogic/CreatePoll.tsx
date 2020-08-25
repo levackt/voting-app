@@ -43,7 +43,7 @@ export const CreatePoll: React.FC<CreatePollProps> = ({ handleCreatePoll, loadin
                 <DialogContent className={classes.createPollDialog}>
                     <Formik
                         initialValues={{
-                            quorumField: "",
+                            quorumField: "0",
                             descriptionField: "",
                             startHeightField: "",
                             endHeightField: "",
@@ -63,7 +63,7 @@ export const CreatePoll: React.FC<CreatePollProps> = ({ handleCreatePoll, loadin
                                     <Grid item xs={12}>
                                     <FormControlLabel
                                         control={
-                                            <FormTextField placeholder="" name={QUORUM_FIELD} type="number" required={true}/>
+                                            <FormTextField placeholder="" name={QUORUM_FIELD} type="number" required={false} disabled={true}/>
                                         }
                                         label="Quorum"
                                         labelPlacement="end"

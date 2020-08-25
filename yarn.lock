@@ -10159,10 +10159,10 @@ schema-utils@^2.5.0, schema-utils@^2.6.0, schema-utils@^2.6.1, schema-utils@^2.6
     ajv "^6.12.2"
     ajv-keywords "^3.4.1"
 
-secretjs@0.9.10:
-  version "0.9.10"
-  resolved "https://registry.yarnpkg.com/secretjs/-/secretjs-0.9.10.tgz#e260975ce9faa5bb759acd90050921da607b9cef"
-  integrity sha512-k4nny3vw+gmFxSF0k5kuBUy+WeHcIxK/oLd4MbfU8LYWzPKfS8Cs6UASVZ9ix3skabD9vT2+iTVfW5VeQ29wqQ==
+secretjs@0.9.15:
+  version "0.9.15"
+  resolved "https://registry.yarnpkg.com/secretjs/-/secretjs-0.9.15.tgz#8e8e2be9ebd37d64b5f78df458e2235ffab41f53"
+  integrity sha512-eBtmgOzSsNj8COMWNgXkHn9HQA0PTYzVgSVwACOLkvDGI9dQcAQkx4RZ89s1KLVjb68IOq6D6x2hHyOHi2QIBw==
   dependencies:
     "@iov/crypto" "^2.1.0"
     "@iov/encoding" "^2.1.0"
