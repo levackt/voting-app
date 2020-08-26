@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/voting-app/static/css/main.f319df4c.chunk.css",
-    "main.js": "/voting-app/static/js/main.5ee3fa1e.chunk.js",
-    "main.js.map": "/voting-app/static/js/main.5ee3fa1e.chunk.js.map",
+    "main.js": "/voting-app/static/js/main.f4e55642.chunk.js",
+    "main.js.map": "/voting-app/static/js/main.f4e55642.chunk.js.map",
     "runtime-main.js": "/voting-app/static/js/runtime-main.b9137f1f.js",
     "runtime-main.js.map": "/voting-app/static/js/runtime-main.b9137f1f.js.map",
     "static/js/2.c6eb0893.chunk.js": "/voting-app/static/js/2.c6eb0893.chunk.js",
     "static/js/2.c6eb0893.chunk.js.map": "/voting-app/static/js/2.c6eb0893.chunk.js.map",
     "index.html": "/voting-app/index.html",
-    "precache-manifest.f9df44619f44a7e0bdea1d422aa497eb.js": "/voting-app/precache-manifest.f9df44619f44a7e0bdea1d422aa497eb.js",
+    "precache-manifest.08be81d3d8a5fd57c9e6c86b488495ba.js": "/voting-app/precache-manifest.08be81d3d8a5fd57c9e6c86b488495ba.js",
     "service-worker.js": "/voting-app/service-worker.js",
     "static/css/main.f319df4c.chunk.css.map": "/voting-app/static/css/main.f319df4c.chunk.css.map",
     "static/js/2.c6eb0893.chunk.js.LICENSE.txt": "/voting-app/static/js/2.c6eb0893.chunk.js.LICENSE.txt"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.b9137f1f.js",
     "static/js/2.c6eb0893.chunk.js",
     "static/css/main.f319df4c.chunk.css",
-    "static/js/main.5ee3fa1e.chunk.js"
+    "static/js/main.f4e55642.chunk.js"
   ]
 }
