@@ -13,7 +13,7 @@ const local: AppConfig = {
 
 const demo: AppConfig = {
   httpUrl: "https://bootstrap.pub.testnet.enigma.co",
-  faucetUrl: "https://faucet.demo-08.cosmwasm.com/credit",
+  faucetUrl: "https://faucet.pub.testnet.enigma.co/credit",
   codeId: 131,
 };
 

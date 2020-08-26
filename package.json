@@ -6,7 +6,7 @@
   "contributors": [
     "Taariq Levack <levackt@users.noreply.github.com>"
   ],
-  "homepage": "https://github.com/enigmampc/voting-app/",
+  "homepage": "https://levackt.github.io/voting-app",
   "dependencies": {
     "@cosmjs/sdk38": "^0.20.0",
     "@date-io/core": "^2.4.0",
