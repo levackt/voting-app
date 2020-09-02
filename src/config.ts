@@ -12,9 +12,9 @@ const local: AppConfig = {
 };
 
 const demo: AppConfig = {
-  httpUrl: "https://bootstrap.pub.testnet.enigma.co",
-  faucetUrl: "https://faucet.pub.testnet.enigma.co/credit",
-  codeId: 131,
+  httpUrl: "https://bootstrap.pub.testnet2.enigma.co",
+  faucetUrl: "https://faucet.pub.testnet2.enigma.co/credit",
+  codeId: 33,
 };
 
 // REACT_APP_LOCAL is set via `yarn start:local`
