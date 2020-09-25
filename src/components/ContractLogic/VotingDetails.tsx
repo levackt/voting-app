@@ -16,7 +16,7 @@ import Box from '@material-ui/core/Box';
 import { PollList } from "./PollList";
 
 export interface CreatePollMsg {
-  readonly quorum_percentage: number;
+  quorum_percentage: number;
   readonly description: string;
   start_height?: number;
   end_height?: number;

@@ -38,7 +38,7 @@ export function Header({ account, address, children }: HeaderProps, props: any):
     const balance = account ? printableBalance(account.balance) : (<span>
           (No funds - Go get some{" "}
           <a
-            href="https://faucet.pub.testnet2.enigma.co"
+            href="https://faucet.secrettestnet.io"
             rel="noopener noreferrer"
             target="_blank"
           >

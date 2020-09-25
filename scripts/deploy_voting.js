@@ -1,52 +1,62 @@
 #!/usr/bin/env node
 
 /* eslint-disable @typescript-eslint/camelcase */
-const { EnigmaUtils, Secp256k1Pen, SigningCosmWasmClient, pubkeyToAddress, encodeSecp256k1Pubkey } = require("secretjs");
+const { Encoding } = require("@iov/encoding");
+const { coin } = require("@cosmjs/sdk38");
+
+/* eslint-disable @typescript-eslint/camelcase */
+const { BroadcastMode, EnigmaUtils, Secp256k1Pen, SigningCosmWasmClient, pubkeyToAddress, encodeSecp256k1Pubkey, makeSignBytes } = require("secretjs");
+const { Slip10RawIndex } = require("@iov/crypto");
 const fs = require("fs");
 
 const httpUrl = "http://localhost:1317";
 const faucet = {
   mnemonic:
     "economy stock theory fatal elder harbor betray wasp final emotion task crumble siren bottom lizard educate guess current outdoor pair theory focus wife stone",
-  address: "secret1cdycaskx8g9gh9zpa5g8ah04ql0lzkrsxmcnfq",
+    address: "secret1cdycaskx8g9gh9zpa5g8ah04ql0lzkrsxmcnfq",
 };
 
-// todo upload code and docs
+// upload code and docs
 const codeMeta = {
-  source: "https://crates.io/api/v1/crates/cd-voting/0.4.0/download",
-  builder: "confio/cosmwasm-opt:0.8.0",
+  source:  "https://github.com/levackt/cosmwasm-examples/tree/secret/voting",
+  builder: "enigmampc/secret-contract-optimizer:1.0.3",
 };
 
 const contract1 = {
   initMsg: {
     denom: "uscrt",
-    name: "voting contract",
+    name: "Privote test",
   },
-  createPollMsg: {
-    description: "test poll",
-    start_height: 100,
-    end_height: 10000
-  },
+  createPollMsg = {
+    description: "Voting should be secret",
+    start_height: height + 2,
+    quorum_percentage: 0,
+    end_height: pollEnd
+  }
 };
 
 const customFees = {
   upload: {
-    amount: [{ amount: "25000", denom: "uscrt" }],
+    amount: [{ amount: "2000000", denom: "uscrt" }],
     gas: "2000000",
   },
   init: {
-    amount: [{ amount: "0", denom: "uscrt" }],
+    amount: [{ amount: "500000", denom: "uscrt" }],
     gas: "500000",
   },
   exec: {
-    amount: [{ amount: "0", denom: "uscrt" }],
-    gas: "500000",
+    amount: [{ amount: "250000", denom: "uscrt" }],
+    gas: "250000",
   },
   send: {
-    amount: [{ amount: "2000", denom: "uscrt" }],
+    amount: [{ amount: "80000", denom: "uscrt" }],
     gas: "80000",
   },
-};
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 async function main() {
 
@@ -62,30 +72,84 @@ async function main() {
     (signBytes) => signingPen.sign(signBytes),
     txEncryptionSeed, customFees
   );
-  
+  console.log(myWalletAddress)
   const wasm = fs.readFileSync(__dirname + "/../contracts/contract.wasm");
-  const uploadReceipt = await client.upload(wasm, codeMeta, "Voting code");
+  const uploadReceipt = await client.upload(wasm, { 
+    source: codeMeta.source, 
+    builder: codeMeta.builder
+  });
   console.info(`Upload succeeded. Receipt: ${JSON.stringify(uploadReceipt)}`);
 
-  // for (const { initMsg, createPollMsg} of [contract1, contract2]) {
-  for (const { initMsg, createPollMsg } of [contract1]) {
+  const codeId = uploadReceipt.codeId;
+
+  for (const { initMsg, createPollMsg} of [contract1]) {
     const memo = `Create a voting instance "${initMsg.name}"`;
-    const { contractAddress } = await client.instantiate(uploadReceipt.codeId, initMsg, initMsg.name, memo);
+    const { contractAddress } = await client.instantiate(codeId, initMsg, initMsg.name);
     console.info(`Contract "${initMsg.name}" instantiated at ${contractAddress}`);
+    let response = await client.getBlock()
+    console.info(`Block height=${JSON.stringify(response.header.height)}`)
+    
+    let height = response.header.height
+    const pollEnd = height + 5;
 
-    console.info(`Creating poll : "${createPollMsg.description}"`);
 
-    const result = await client.execute(
+    console.info(`Creating poll : "${JSON.stringify(createPollMsg)}"`);
+
+    let result = await client.execute(
       contractAddress, {create_poll: createPollMsg}
     );
-    console.info(`Result: ${JSON.stringify(result)}`)
+    
+    console.info(`Create poll result: ${JSON.stringify(result)}`)
 
+    const config = await client.queryContractSmart(contractAddress, { config: { } })
+    console.log(`config=${JSON.stringify(config)}`)
+    const pollId = config.poll_count;
+
+    const denom = "uscrt";
+    const amount = 1000000
+    const stake = [coin(amount, denom)];
+
+    const currentStake = await client.queryContractSmart(contractAddress, { token_stake: { address: myWalletAddress } })
+    console.log(`stake=${JSON.stringify(currentStake)}`)
+    if (parseInt(currentStake.token_balance) === 0) {
+        
+      result = await client.execute(contractAddress,
+        { stake_voting_tokens: { } }, "", stake,
+      );
+      console.info(`Stake result: ${JSON.stringify(result)}`)
+    }
+    
+    const yay = "yes";
+    const nay = "nay";
+    result = await client.execute(
+      contractAddress, { cast_vote: { weight: String(amount), vote: yay, poll_id: pollId } }
+    )
+    console.info(`Vote result: ${JSON.stringify(result)}`)
+
+    // wait for poll to end then tally
+    response = await client.getBlock()
+    console.info(`Block height=${JSON.stringify(response.header.height)}`)
+    while (height < pollEnd) {
+      console.info("waiting for new block")
+      await sleep(1000)
+      response = await client.getBlock();
+      height = response.header.height
+    }
+    console.info("poll expired")
+
+    let tallyMsg = { end_poll: { poll_id: pollId } }
+    result = await client.execute(contractAddress, tallyMsg, "");
+    
+    console.info(`Tally result: ${JSON.stringify(result)}`)
+
+    const poll = await client.queryContractSmart(contractAddress, { poll: { poll_id: pollId } })
+    console.info(`${poll}`)
   }
 }
 
 main().then(
   () => {
-    console.info("Done deploying voting instances.");
+    console.info("Done deploying voting instance");
     process.exit(0);
   },
   error => {
