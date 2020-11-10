@@ -9,7 +9,8 @@ const { BroadcastMode, EnigmaUtils, Secp256k1Pen, SigningCosmWasmClient, pubkeyT
 const { Slip10RawIndex } = require("@iov/crypto");
 const fs = require("fs");
 
-const httpUrl = "http://localhost:1317";
+const httpUrl = "https://bootstrap.secrettestnet.io";
+// const httpUrl = "http://localhost:1317";
 const faucet = {
   mnemonic:
     "economy stock theory fatal elder harbor betray wasp final emotion task crumble siren bottom lizard educate guess current outdoor pair theory focus wife stone",
@@ -22,17 +23,19 @@ const codeMeta = {
   builder: "enigmampc/secret-contract-optimizer:1.0.3",
 };
 
+const createPollMsg = {
+  description: "Voting should be secret",
+  quorum_percentage: 0,
+};
+
+const initMsg = {
+  denom: "uscrt",
+  name: "Privote test",
+};
+
 const contract1 = {
-  initMsg: {
-    denom: "uscrt",
-    name: "Privote test",
-  },
-  createPollMsg = {
-    description: "Voting should be secret",
-    start_height: height + 2,
-    quorum_percentage: 0,
-    end_height: pollEnd
-  }
+  initMsg,
+  createPollMsg
 };
 
 const customFees = {
